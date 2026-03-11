@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "name": "aipack-core",
+  "version": "2026.03.11",
+  "root": ".",
+  "rules": [
+    "aipack-guardrails",
+    "pack-governance",
+    "rule-constraints",
+    "skill-constraints",
+    "workflow-constraints",
+    "agent-constraints",
+    "mcp-config-constraints"
+  ],
+  "skills": [
+    "pack-content-craft",
+    "aipack-system",
+    "agent-configuration"
+  ],
+  "workflows": [
+    "pack-review"
+  ],
+  "profiles": [
+    "profiles/aipack-core.yaml"
+  ]
+}
