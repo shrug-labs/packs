@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "name": "memory",
+  "version": "2026.03.23",
+  "description": "Persistent memory system — knowledge routing, session capture, auditing, and lifecycle management across sessions.",
+  "root": ".",
+  "rules": [
+    "memory-bank",
+    "knowledge-hunger"
+  ],
+  "skills": [
+    "memory-bank",
+    "knowledge-hygiene"
+  ],
+  "workflows": [
+    "remember",
+    "save-session",
+    "session-retro",
+    "knowledge-audit",
+    "extract-memory-to-packs"
+  ],
+  "profiles": [
+    "profiles/memory-user.yaml"
+  ]
+}

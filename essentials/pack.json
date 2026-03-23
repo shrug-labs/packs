@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "name": "essentials",
-  "version": "2026.03.11",
+  "version": "2026.03.23",
   "description": "Essential agentic capabilities — rules, skills, and workflows that fill behavioral and capability gaps in AI agents for software engineering.",
   "root": ".",
   "agents": [
@@ -25,7 +25,6 @@
     "finishing-a-development-branch",
     "subagent-driven-development",
     "dispatching-parallel-agents",
-    "knowledge-hygiene",
     "deep-research",
     "task-decomposition",
     "operational-triage",
@@ -35,10 +34,7 @@
     "brainstorm",
     "write-plan",
     "execute-plan",
-    "knowledge-audit",
-    "pr-readiness-code",
-    "session-retro",
-    "remember"
+    "pr-readiness-code"
   ],
   "profiles": [
     "profiles/essentials.yaml"

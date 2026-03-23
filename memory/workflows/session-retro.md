@@ -10,6 +10,12 @@ metadata:
 
 Review what happened in this session and extract learnings worth persisting.
 
+## When to use
+
+Use when a session exposed behavioral corrections, knowledge gaps, or workflow friction worth capturing. The goal is improvement — extracting *what should change* for future sessions.
+
+Not the same as save-session. Save-session captures *project state* for continuity (what did we build?). A retro captures *behavioral learnings* (what should the agent do differently?). You may retro a throwaway session that doesn't need saving, or save a productive session that has no behavioral learnings to extract.
+
 ## Prerequisites
 
 - Fork the conversation if mid-session (preserve main context).

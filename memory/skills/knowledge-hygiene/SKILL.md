@@ -119,20 +119,7 @@ When migrating content, it usually needs reformatting for its destination:
 
 ## Persistent Memory Convention
 
-When knowledge passes through the routing decision tree and lands in "Stays in memory," use this convention for organizing it.
-
-### Recommended structure
-
-Use a dedicated persistent memory store — a standalone git repo, a notes directory, or whatever your environment provides. The key requirements: survives across sessions, is version-controlled, and is separate from pack content.
-
-### Internal organization
-
-| Knowledge type | Subdirectory |
-|---------------|-------------|
-| Project status, decisions, context | `projects/` |
-| Strategic direction, multi-project plans | `strategy/` |
-| Reference material, legacy docs | `reference/` |
-| Recurring issues with known fixes | `known-issues.md` |
+When knowledge passes through the routing decision tree and lands in "Stays in memory," use the memory-bank rule and skill (in this pack) for structure, file format, categories, and protocol. This skill handles classification only — the memory-bank skill is the SSOT for how memory is organized.
 
 ### Memory is the default bucket — challenge it
 
@@ -143,11 +130,4 @@ Before writing to persistent memory, re-check:
 - Does it describe a methodology or reference framework? → It's a skill, not memory.
 - Does it describe one repo's architecture, conventions, or build system? → It's AGENTS.md, not memory.
 
-If it's genuinely strategic context, project status, a known issue, or an observation not yet confirmed as durable — then it belongs in memory.
-
-### Protocol
-
-- **Read before write.** Check existing files before creating new ones. Update existing content; do not create duplicates.
-- **Organize semantically.** Use subdirectories by topic. File names should be descriptive slugs.
-- **No duplication.** If knowledge exists in a pack or repo docs, do not also store it in memory. One SSOT.
-- **Mutation gate.** Creating and updating memory files is permitted. Deleting files requires user confirmation.
+If it's genuinely strategic context, project status, a known issue, a permanent constraint, or an observation not yet confirmed as durable — then it belongs in memory.
