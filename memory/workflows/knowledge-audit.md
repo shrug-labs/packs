@@ -3,7 +3,7 @@ name: knowledge-audit
 description: Audit persistent memory and knowledge stores for misplaced, stale, or misclassified content — classify, propose migrations, execute with confirmation
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-09
+  last_updated: 2026-03-23
 ---
 
 # Knowledge Audit
@@ -23,7 +23,7 @@ Periodic audit of knowledge stores. Finds content in the wrong place and migrate
    - Persistent memory (cross-session stores, memory banks, knowledge bases)
    - Harness auto-memory (session/project-scoped memory files)
    - Pack source directories (all packs)
-   - Repo-scoped agent config (AGENTS.md, CLAUDE.md in active repos)
+   - Repo-scoped agent config (AGENTS.md or harness equivalent in active repos)
 
    List each location and its purpose. No reads yet — just build the inventory.
 

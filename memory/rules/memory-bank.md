@@ -22,7 +22,7 @@ Location: `~/.config/aipack/memory-bank/` — lives under aipack's config direct
 | Recurring issues with known fixes | `~/.config/aipack/memory-bank/known-issues.md` | pack content |
 | Permanent external limitations | `~/.config/aipack/memory-bank/constraints.md` | pack content |
 | Behavioral rules, skills, workflows | `~/.config/aipack/packs/` | memory bank |
-| Repo-specific developer context | That repo's AGENTS.md / CLAUDE.md | memory bank |
+| Repo-specific developer context | That repo's AGENTS.md (or harness equivalent) | memory bank |
 
 ## Decision Tree
 

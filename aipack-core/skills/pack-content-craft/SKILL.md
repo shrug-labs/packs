@@ -85,7 +85,7 @@ Follow RED-GREEN-REFACTOR. Same discipline as code TDD, applied to documentation
 ### RED: Establish Baseline
 
 1. Define a realistic task where the content should matter
-2. Run the task WITHOUT the content (use a subagent for isolation)
+2. Run the task WITHOUT the content (use a subagent or fresh conversation for isolation)
 3. Document exactly what goes wrong:
    - What choices did the agent make?
    - What rationalizations did it use? (capture verbatim)

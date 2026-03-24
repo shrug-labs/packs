@@ -3,7 +3,7 @@ name: session-retro
 description: End-of-session review — extract conventions, knowledge gaps, workflow friction, and memory corrections from the conversation
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-11
+  last_updated: 2026-03-23
 ---
 
 # Session Retrospective
@@ -18,8 +18,8 @@ Not the same as save-session. Save-session captures *project state* for continui
 
 ## Prerequisites
 
-- Fork the conversation if mid-session (preserve main context).
-- If end-of-session, no fork needed.
+- If mid-session and your harness supports conversation branching, branch first to preserve the main context. Otherwise, proceed in the current conversation.
+- If end-of-session, no branching needed.
 
 ## Steps
 
@@ -102,12 +102,52 @@ Not the same as save-session. Save-session captures *project state* for continui
 
    Do NOT write the pack content itself during a retro. Pack content requires dedicated attention with pack-content-craft discipline — not end-of-session leftovers.
 
-6. **Summary**
+6. **Rate session quality**
+
+   Based on the full retro, propose a session quality rating:
+   - **poor** — largely unproductive, went in circles
+   - **okay** — completed goals with notable friction
+   - **good** — productive, normal friction
+   - **great** — notably productive, minimal friction, clear accomplishments
+   - **perfect** — exceptional, everything clicked
+
+   Present the rating with a one-line rationale. User confirms or adjusts.
+
+   If the confirmed rating is **great** or **perfect**, append a row to `~/.config/aipack/memory-bank/reference/session-wins.md`:
+
+   ```
+   | <YYYY-MM-DD> | <project> | <one-line summary> | <quality> | <session ref> |
+   ```
+
+   - **Project:** working directory (CLI) or workspace/project name (IDE) — whatever identifies the context.
+   - **Session ref:** follow save-session's convention for transcript pointers. Record enough to locate the session later — the format depends on the harness (resume command, conversation ID, task title). If no resume mechanism exists, record the harness name and approximate time. The goal is findability, not a runnable command.
+
+   If the file doesn't exist, create it with this template:
+
+   ```markdown
+   ---
+   name: session-wins
+   description: Rolling log of great-or-better sessions captured during session-retro
+   type: reference
+   ---
+
+   # Session Wins
+
+   | Date | Project | Summary | Quality | Session |
+   |------|---------|---------|---------|---------|
+   ```
+
+   Add the file to `MEMORY.md` under Reference on first creation.
+
+   MUTATION: Appending to session-wins.md. Show the row. Wait for approval.
+
+7. **Summary**
 
    | Bucket | Count | Action |
    |--------|-------|--------|
    | Memory captures | | Written via remember |
    | Pack candidates | | TODOs recorded — execute via knowledge-audit or dedicated session |
+   | Session quality | | Recorded if great+ |
    | Deferred | | Noted for future review |
 
    If pack candidates were recorded, note: "Run knowledge-audit or start a pack-writing session to process these."

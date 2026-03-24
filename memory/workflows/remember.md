@@ -3,7 +3,7 @@ name: remember
 description: Capture knowledge into persistent memory — for strategic context, decisions, known issues, and observations not yet ready for pack content
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-16
+  last_updated: 2026-03-23
 ---
 
 # Remember
@@ -12,8 +12,8 @@ Quick capture to `~/.config/aipack/memory-bank/`. Memory only — not packs, not
 
 ## Prerequisites
 
-- Fork the conversation BEFORE invoking this workflow. The fork is expendable — its only job is the capture.
-- If already in a fork, proceed.
+- If your harness supports conversation branching, branch before invoking this workflow — the branch is expendable, its only job is the capture.
+- If already in a branch or your harness doesn't support branching, proceed.
 
 ## Scope
 

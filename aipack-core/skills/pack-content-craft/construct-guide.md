@@ -23,11 +23,11 @@ Only harness config locations (`~/.claude/rules/`, `.opencode/rules/`, etc.) are
 
 ## Instruction Files vs Pack Content
 
-Instruction files (AGENTS.md, CLAUDE.md) and pack content (rules, skills, workflows) serve different audiences. Never mix them.
+Instruction files (AGENTS.md and harness equivalents) and pack content (rules, skills, workflows) serve different audiences. Never mix them.
 
 | Layer | Files | Audience | Content type |
 |-------|-------|----------|-------------|
-| Instruction | AGENTS.md, .claude/CLAUDE.md | Agents working on **source code** | Directives, constraints, directory maps |
+| Instruction | AGENTS.md (or harness equivalent) | Agents working on **source code** | Directives, constraints, directory maps |
 | Pack rules | rules/*.md | Agents **using** the pack (synced to harnesses) | Operational governance |
 | Pack skills/workflows | skills/, workflows/ | Agents **using** the pack (on-demand) | Methodology, processes |
 | Docs | docs/**/*.md | Humans + on-demand agent reads | Reference material, specs |

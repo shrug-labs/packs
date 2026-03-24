@@ -3,7 +3,7 @@ name: save-session
 description: Save the current conversation to memory with a summary, key insights, artifacts, and transcript location
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-15
+  last_updated: 2026-03-23
 ---
 
 # Save Session
@@ -21,9 +21,9 @@ Not the same as session-retro. A retro extracts *behavioral learnings* (what sho
 1. **Identify the session**
 
    Determine how to find this conversation again:
-   - Working directory: run `pwd`
-   - Session/conversation ID: check for branch output (`/branch`), session metadata, or any harness-specific resume mechanism
-   - Note that resume commands are typically scoped to the project directory — record both the ID and the directory
+   - **Working directory or workspace:** the project directory or IDE workspace this session operated in
+   - **Session identifier:** conversation ID, task ID, or session name — whatever the harness provides for locating this session later
+   - Record both, since most harnesses scope sessions to a project directory
 
 2. **Summarize the session**
 
@@ -61,7 +61,7 @@ Not the same as session-retro. A retro extracts *behavioral learnings* (what sho
    Include in the body:
    - Summary and key insights (from step 2)
    - Artifact locations with full paths
-   - Transcript reference: harness-specific resume command (e.g., `claude -r <id>`, `opencode --resume <id>`) with the note `(resume from <working-directory>)`
+   - Transcript reference: enough to locate the session later. The format depends on the harness — resume command, conversation/task ID, session name. Include the project context so the reference is actionable.
    - "How to apply" section explaining when future sessions should load this context
 
    MUTATION: Writing to memory-bank. Show the full file content. Wait for approval.
@@ -87,4 +87,4 @@ Not the same as session-retro. A retro extracts *behavioral learnings* (what sho
 - Don't persist ephemeral task details (debugging steps, intermediate attempts) — only knowledge useful in future sessions.
 - Don't duplicate what's already in artifacts (the meeting prep doc has the detail — the memory file points to it).
 - If the session touched multiple unrelated topics, write separate memory entries rather than one mega-file.
-- The transcript pointer is critical — include the working directory so the resume command actually works.
+- The transcript pointer is critical — include the working directory and session identifier so a future session can locate this one.

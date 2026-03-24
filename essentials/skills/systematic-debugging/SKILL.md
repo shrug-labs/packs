@@ -3,7 +3,7 @@ name: systematic-debugging
 description: Use when encountering any bug, test failure, unexpected behavior, or system anomaly — before proposing fixes
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-09
+  last_updated: 2026-03-23
 ---
 
 # Systematic Debugging
@@ -149,6 +149,8 @@ When the error appears deep in a call stack:
 ### 3.1 Form a Single Hypothesis
 
 State it explicitly: "The root cause is X because evidence Y shows Z."
+
+**Hypothesis quality check.** Prefer structural explanations (data flow, variable lifetime, error handling paths) over timing/concurrency theories unless there is direct evidence of concurrent execution (goroutine spawning, async callbacks, thread pools) in the call path. Concurrency bugs are real but rare; variable lifecycle bugs are common. A plausible concurrency theory without concurrency evidence wastes investigation cycles.
 
 ### 3.2 Test Minimally
 

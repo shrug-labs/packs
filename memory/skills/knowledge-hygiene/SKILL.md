@@ -3,7 +3,7 @@ name: knowledge-hygiene
 description: Use when classifying knowledge across persistence locations (memory, packs, repo docs) to find misplaced, stale, or misrouted content — not for authoring or quality-reviewing pack content
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-11
+  last_updated: 2026-03-23
 ---
 
 # Knowledge Hygiene
@@ -29,7 +29,7 @@ Every knowledge item falls into exactly one category. If you're torn between two
 | **Behavioral constraint** | Trigger-action pairs, imperative voice ("do X when Y", "never Z"), agent misbehavior correction | Pack rule (<60 lines) or rule seed + skill |
 | **Executable process** | Numbered steps, tool invocations, decision gates, mutation checkpoints | Pack workflow |
 | **Domain knowledge** | Reference material, methodology, classification frameworks, on-demand context | Pack skill |
-| **Repo-scoped context** | Architecture, dependency direction, build commands, coding conventions for ONE codebase | That repo's AGENTS.md / CLAUDE.md |
+| **Repo-scoped context** | Architecture, dependency direction, build commands, coding conventions for ONE codebase | That repo's AGENTS.md (or harness equivalent) |
 | **Strategic context** | Decisions, direction, positioning, stakeholder notes, multi-project plans | Persistent memory |
 | **Stale/superseded** | Explicitly replaced, contains dead paths/tools/versions, or says "see X instead" | Delete (after confirming replacement exists) |
 

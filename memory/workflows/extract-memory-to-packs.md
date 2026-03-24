@@ -3,7 +3,7 @@ name: extract-memory-to-packs
 description: Extract stable knowledge from memory-bank and external memory sources into governed pack content
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-09
+  last_updated: 2026-03-23
 ---
 
 # Extract Memory to Packs
@@ -42,6 +42,8 @@ Crystallize knowledge from `~/.config/aipack/memory-bank/` into pack content (ru
    | Strategic context, project status, observations | Stays in memory | -- |
    | Stale, superseded, or completed | Prune candidate | -- |
 
+   Weight the scan toward high-value constructs: skills (methodology, frameworks, decision trees) carry the most knowledge and are hardest to discover by pattern-matching. Workflows (repeatable processes) are next. Rules (trigger-action pairs) are easiest to spot but often produce low-value one-liner additions. Don't let rule-hunting crowd out skill and workflow extraction.
+
    Present the classification table to the user with:
    - Source file and section
    - Proposed classification
@@ -73,6 +75,7 @@ Crystallize knowledge from `~/.config/aipack/memory-bank/` into pack content (ru
 5. **Mark sources as migrated**
 
    For memory-bank files that are fully promoted:
+   - Before marking a file as fully promoted, enumerate every section and fact in the file. Confirm each is either (a) present in a pack construct or (b) explicitly valueless. "Most of it is in the skill" is not sufficient — residual knowledge compounds into loss across audit cycles.
    - Add deprecation callout per the memory-bank skill deprecation flow
    - Do NOT delete yet — wait for sync verification
 

@@ -3,7 +3,7 @@ name: anti-slop
 description: Anti-slop directives — prevent low-quality, unverified, or performative output
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-09
+  last_updated: 2026-03-23
 ---
 
 # Anti-Slop
@@ -11,7 +11,7 @@ metadata:
 ## Understand Before Acting
 
 - Read the file before proposing changes to it. Read surrounding files if the change touches cross-cutting concerns. No exceptions.
-- Identify which project you are in and locate its local AGENTS.md, CLAUDE.md, or README before applying workspace-level defaults.
+- Identify which project you are in and locate its local AGENTS.md (or harness equivalent) and README before applying workspace-level defaults.
 - Check whether the artifact is **generated** or **authored**. Do NOT hand-edit generated artifacts — find and modify the SSOT input, then run the render/promote pipeline.
 - If a project has a Makefile target for validation or drift checking, run it before declaring done.
 - Before reasoning about system state or architecture, verify against actual config/state files — not memory, inference, or documentation alone.

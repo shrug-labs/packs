@@ -3,7 +3,7 @@ name: test-driven-development
 description: Use when implementing any feature, bug fix, or behavior change — before writing production code
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-09
+  last_updated: 2026-03-23
 ---
 
 # Test-Driven Development
@@ -81,8 +81,10 @@ Run the test. This step is **mandatory, never skip it.**
 | Rust | `cargo test test_name` |
 | Other | Use the project's existing test runner. Check Makefile, package.json, or CI config. |
 
+**Stub new functions first.** If the test references a function that doesn't exist yet, stub it before running (return zero values, `panic("not implemented")`, or `raise NotImplementedError`). A compilation error is not valid RED — you haven't exercised the assertion.
+
 **Confirm all three:**
-1. Test **fails** (not errors — compilation errors and import failures are not valid RED)
+1. Test **runs and fails** (not errors — compilation errors and import failures are not valid RED)
 2. Failure message matches what you expect
 3. Fails because the feature is missing, not because of a typo
 
@@ -166,6 +168,12 @@ Asserting that a mock was called, or that a mock element exists, tells you nothi
 Methods that exist only for test cleanup, test inspection, or test setup pollute the production API. Put test utilities in test files or a test helper package.
 
 **Gate:** Before adding a method to production code — ask: "Is this called outside of tests?" If no, move it to test utilities.
+
+### Never test language builtins or trivial pass-through
+
+Asserting that `len([]int{1, 2}) == 2` tests the language, not your code. A RED test must exercise your function's contract boundary — its interaction with real inputs, edge cases, or state. If removing your function wouldn't change the test outcome, the test is worthless.
+
+**Gate:** Before declaring RED — ask: "Does this test fail because MY code's behavior is wrong, or because a language builtin would need to misbehave?" If the latter, rewrite to test the actual contract.
 
 ### Never mock without understanding dependencies
 
