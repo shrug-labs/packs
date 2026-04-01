@@ -3,7 +3,7 @@ name: memory-bank
 description: Use when working with ~/.config/aipack/memory-bank/ content — organizing, reviewing, deprecating, or deciding what belongs where versus in packs
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-23
+  last_updated: 2026-04-01
 ---
 
 # Memory Bank
@@ -95,6 +95,7 @@ Things found in memory-bank that don't belong:
 | "Agent can't fix this — tell user to run Y" | Trigger-action pair = behavioral constraint | Pack rule or skill |
 | Pack design principles (runtime model, survivability) | Pack authoring methodology | Pack skill |
 | Step-by-step deploy procedure | Repeatable process = workflow | Pack workflow |
+| Reference data consumed by one specific skill | Unbundled skill reference — loads only at activation in `references/` | That skill's `references/` directory |
 | Session-specific state (current task, temp branches) | Ephemeral, not cross-session | Don't persist — stays in conversation context |
 
 ## Protocol
@@ -102,6 +103,10 @@ Things found in memory-bank that don't belong:
 ### Read Before Write
 
 Before creating a new file, search existing memory-bank files for related content. Prefer updating an existing file over creating a new one.
+
+### Handling Upstream Renames
+
+When an upstream entity (service, tool, repo) is renamed, don't cascade the rename across all memory files. Add a dated note instead: "Note (YYYY-MM-DD): X renamed to Y upstream." Only cascade when the old name would cause a concrete failure (broken commands, wrong API endpoints).
 
 ### Deprecation Flow
 

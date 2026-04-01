@@ -59,6 +59,15 @@ Common violations:
 
 When writing multi-harness examples, consult the harness-capability-matrix in the aipack-system skill for canonical terminology per harness.
 
+### Content promotion hygiene
+
+When moving content from a personal or team pack to a shared or public pack, scan for and strip:
+- Personal names, email addresses, and individual attribution
+- Internal hostnames, team-specific tool names, and org-specific identifiers
+- Session-specific context that only made sense in the original pack
+
+If attribution matters, use role descriptors ("reported by a user") not names.
+
 ### Least privilege
 
 - Default to read-only tooling and instructions.
@@ -264,4 +273,6 @@ metadata:
 ### Docs
 
 - Use scannable headings and put the fast path first.
+- Lead pack READMEs with install commands, not prerequisite checklists. If prerequisites matter (SSH keys, specific tooling), mention them inline near the command that needs them.
+- Do not enumerate pack contents (rules, skills, tool lists) in external docs. The pack manifest is the SSOT for inventory. Describe what the pack does and how to install it; link to the source for the authoritative listing.
 - Avoid duplicating inventories; link to canonical sources.

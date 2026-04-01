@@ -3,7 +3,7 @@ name: aipack-system
 description: Use when syncing, configuring, troubleshooting, or managing aipack packs — including sync-config, profiles, harness behaviors, and the delivery pipeline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-11
+  last_updated: 2026-04-01
 ---
 
 # aipack System Reference
@@ -104,6 +104,10 @@ When a pack entry should include all content, omit the vector sections entirely:
 - Omitting `rules:`, `skills:`, etc. means "include everything" — same as `include: null` but without ceremony.
 - **Footgun:** `include: []` (empty list) means "include NOTHING" — it silently blocks all content from that vector.
 - Only add `include:`/`exclude:` sections when you need to filter specific items.
+
+### Settings exclusivity
+
+Only one pack per profile can have `settings.enabled: true`. If two packs claim it, `aipack sync` fails. When moving settings between packs, grep all profiles for `settings.enabled: true` on the source pack and disable it.
 
 ### Toggling after sync
 
@@ -233,6 +237,8 @@ Global scope prefixes with `~/` (e.g., `~/.claude/rules/`). Project scope writes
 ```
 
 Content listed in pack.json is what's available to profiles. If it's not in the manifest, it won't be synced regardless of profile settings.
+
+`default_allowed_tools` in pack.json only scopes MCP servers that the pack itself defines in its `mcp.servers` section. It cannot restrict tools on servers defined by another pack. Cross-pack tool scoping belongs in the profile's per-server `allowed_tools` entries.
 
 ## Configuration Locations
 

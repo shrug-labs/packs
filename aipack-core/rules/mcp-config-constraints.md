@@ -7,7 +7,7 @@ paths:
   - "**/mcp/**"
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-09
+  last_updated: 2026-04-01
 ---
 
 # MCP Config Constraints
@@ -29,6 +29,7 @@ metadata:
 - Prefer explicit tool allowlists per server over granting full access.
 - Read-only tools first. Add write tools only when a workflow requires mutation.
 - Document why each write tool is included.
+- `available_tools: []` means zero tools — not "unknown" or "not yet discovered." If the tool list is dynamic or undiscoverable, omit the `available_tools` field entirely.
 
 ## After Config Changes
 

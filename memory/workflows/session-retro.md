@@ -3,7 +3,7 @@ name: session-retro
 description: End-of-session review — extract conventions, knowledge gaps, workflow friction, and memory corrections from the conversation
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-23
+  last_updated: 2026-04-01
 ---
 
 # Session Retrospective
@@ -25,11 +25,13 @@ Not the same as save-session. Save-session captures *project state* for continui
 
 1. **Tally pack invocations**
 
-   Scan the conversation for pack content that was invoked during this session:
+   Scan the conversation for pack-delivered content that was invoked during this session:
    - `/command-name` invocations (workflows)
    - `@agent-name` dispatches (agents)
    - Skill tool calls (skills)
    - Rules referenced by the agent in its reasoning
+
+   Only tally resources delivered by packs. Built-in harness features (slash commands like `/help`, IDE integrations, native tool calls) are not pack resources.
 
    For each invocation found, update the pack usage tally in your persistent memory store:
    - If the resource already has a row, increment its Count and update Last Used.
