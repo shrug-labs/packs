@@ -3,7 +3,7 @@ name: agent-configuration
 description: Use when understanding, adding, changing, or troubleshooting agent harness configuration (rules/skills/commands/tools/permissions) across Claude Code, OpenCode, Codex, or Cline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-11
+  last_updated: 2026-04-01
 ---
 
 ## Why this exists
@@ -66,21 +66,24 @@ Use the introspection commands from the Verify table above, adapted to your acti
 4) **Tools / MCP servers**: capability surface (must be least-privilege and auditable)
 5) **Hooks / guardrails**: policy enforcement (formatting, validation, secret checks)
 
-## Facets (load these, not everything)
-Start with: `INDEX.md`.
+## What to load
 
-## MCP governance (non-negotiables)
+This is an umbrella skill. Load only the reference you need.
+
+| If you need to... | Load |
+|---|---|
+| Change tool access / MCP allowlists | `references/mcp-governance.md` |
+| Understand a specific harness | `references/harness-claudecode.md`, `harness-opencode.md`, `harness-cline.md`, `harness-codex.md`, or `harness-cursor.md` |
+| Map pack frontmatter to harness fields | `references/frontmatter-mapping.md` |
+| Document MCP server inventory | `references/mcp-inventory.md` |
+| Verify changes took effect | `references/validation-checklist.md` |
+| Design portable multi-harness setup | `references/layering-model.md` |
+
+### MCP governance (non-negotiables)
 - Keep MCP tools least-privilege and auditable.
 - Route sensitive operations through purpose-built ops agents.
 - Treat inventories/snapshots as evidence; treat enforced config as truth.
-- See: `mcp/INDEX.md`
-
-## Facet directories
-- `layers/` — portable layering model
-- `mcp/` — MCP governance
-- `validation/` — post-change verification checklist
-- `frontmatter-mapping.md` — pack frontmatter → harness-native field mapping (cross-harness)
-- `opencode/`, `cline/`, `cursor/`, `codex/` — per-harness configuration notes
+- See: `references/mcp-governance.md`
 
 ## Validation checklist (run after any harness change)
 1) Confirm the harness loads the right rules/instructions.
@@ -96,6 +99,9 @@ Start with: `INDEX.md`.
 - Domain-specific packs may provide their own dev/ops skills that extend this framework with org-specific MCP routing, domain workflows, and internal anchors.
 
 ## Canonical docs anchors (external)
+Claude Code
+- Config + usage: https://docs.anthropic.com/en/docs/claude-code
+
 OpenCode
 - Config precedence + locations: https://opencode.ai/docs/config/
 - Tools + permissions: https://opencode.ai/docs/tools/

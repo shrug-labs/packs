@@ -7,7 +7,7 @@ How to add, review, and remove pack content.
 Before adding a new resource:
 
 1. Check whether an existing resource already covers the use case -- extend rather than duplicate.
-2. Use the templates and frontmatter conventions in `authoring-standard.md`.
+2. Use the templates and frontmatter conventions in `../authoring-standard.md`.
 3. Test the resource in context: run the pack's validation targets and at least one realistic scenario.
 4. Decide whether it belongs in the default profile or only in a maintainer/opt-in profile. When in doubt, leave it out of the default.
 5. If the pack uses a tier registry, the new resource starts at Tier B (Pilot) until it has evidence.
@@ -31,6 +31,6 @@ When reviewing existing resources:
 
 ## References
 
-- Authoring standard: `authoring-standard.md`
+- Authoring standard: `../authoring-standard.md`
 - Quality dimensions: `quality-dimensions.md`
 - Construct guide: `construct-guide.md`

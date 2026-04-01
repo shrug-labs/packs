@@ -21,7 +21,7 @@ metadata:
 
 2. **Audit metrics**
 
-   Run `pack-audit.sh <pack-root>` (in the pack-content-craft skill directory). Review the output for:
+   Run `scripts/pack-audit.sh <pack-root>` (in the pack-content-craft skill directory). Review the output for:
    - Budget violations (OVER) — rules >60 lines, SKILL.md >500 lines
    - Missing frontmatter fields (MISS/NONE)
    - CSO trigger failures on skill descriptions
@@ -33,7 +33,7 @@ metadata:
 
 4. **Level 1: Ecosystem fit**
 
-   Use pack-content-craft skill, specifically review-guide.md Level 1 criteria.
+   Use pack-content-craft skill, specifically references/review-guide.md Level 1 criteria.
    - Check for rule overlap across packs
    - Check for skill description overlap (ambiguous triggers)
    - Calculate total always-on token budget across all loaded packs
@@ -43,7 +43,7 @@ metadata:
 
 5. **Level 2: Internal coherence**
 
-   Read ALL content files in the pack. Use review-guide.md Level 2 criteria.
+   Read ALL content files in the pack. Use references/review-guide.md Level 2 criteria.
    - Check cross-references (do workflows reference existing skills?)
    - Check for contradictions between rules and skills
    - Check profile coverage (if profiles exist)
@@ -53,7 +53,7 @@ metadata:
 
 6. **Level 3: Content quality**
 
-   For each piece of content, apply review-guide.md Level 3 criteria:
+   For each piece of content, apply references/review-guide.md Level 3 criteria:
    - Three behavioral tests (removal, specificity, rationalization)
    - Per-construct checklist
    - Semantic assessment: vague guidance, hedging language, missing decision trees

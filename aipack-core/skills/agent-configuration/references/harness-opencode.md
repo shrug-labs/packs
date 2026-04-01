@@ -1,7 +1,33 @@
 # OpenCode harness
 
 ## Commands / workflows (slash commands)
-- How to author and scope commands: `commands.md`
+
+OpenCode supports custom commands defined either in config JSON or as Markdown files.
+
+### Where they live (scoping)
+
+- Global: `~/.config/opencode/commands/`
+- Per-project: `.opencode/commands/`
+
+The filename becomes the command name (e.g., `test.md` → `/test`).
+
+### Command options
+
+Commands can set:
+- `description` (shown in the UI)
+- `agent` (which agent runs the command)
+- `subtask` (force subagent execution to keep primary context clean)
+- `model` (override model)
+
+The Markdown body is the prompt template.
+
+### Prompt template features
+
+- `$ARGUMENTS`, `$1`, `$2`, ... for arguments
+- `@path/to/file` to inline file content
+- `` !`shell command` `` to inline shell output (runs in project root)
+
+Docs: https://opencode.ai/docs/commands/
 
 ## Where config lives
 - Global: `~/.config/opencode/opencode.json`
@@ -24,9 +50,8 @@ Naming constraint: any `*.md` under `agents/` is treated as an agent definition.
 - `opencode session list` (project-scoped session listing)
 - `opencode export <sessionID>` / `opencode import <file-or-share-url>` (portability)
 
-
 ## Common gotchas
-- Agent `description` is required; missing descriptions can make agents “disappear” from listings.
+- Agent `description` is required; missing descriptions can make agents "disappear" from listings.
 - Prefer Markdown agents for ops roles (easier to read/review than JSON).
 
 ## Write gate (policy)
@@ -40,4 +65,3 @@ Any write action requires an explicit user token:
 - Agents: https://opencode.ai/docs/agents/
 - Rules (`instructions` + `AGENTS.md`): https://opencode.ai/docs/rules/
 - Config schema (`skills.paths`): https://opencode.ai/config.json
-

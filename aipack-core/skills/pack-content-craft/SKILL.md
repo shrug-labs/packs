@@ -76,7 +76,7 @@ digraph construct_choice {
 
 Challenge every "yes" to "Needed EVERY interaction?" — rules consume tokens on every turn. The bar: would removing this from ANY interaction cause harm? If it's only relevant 30% of the time, it's a skill.
 
-For detailed guidance on each construct, see construct-guide.md in this directory.
+For detailed guidance on each construct, see references/construct-guide.md.
 
 ## TDD Loop for Pack Content
 
@@ -111,7 +111,7 @@ If it still fails, the content isn't specific enough. Rewrite, don't add more.
 4. Build rationalization table from all observed excuses
 5. Re-test until the content is bulletproof
 
-For patterns and techniques to use in your content (iron laws, rationalization tables, red flags lists, degrees of freedom), see behavioral-patterns.md in this directory.
+For patterns and techniques to use in your content (iron laws, rationalization tables, red flags lists, degrees of freedom), see behavioral-patterns.md.
 
 ## CSO (Claude Search Optimization)
 
@@ -152,9 +152,11 @@ description: Use when creating, editing, or reviewing any pack content (rules, s
 
 ## References
 
-- **Construct details:** See construct-guide.md in this directory
-- **Behavioral patterns:** See behavioral-patterns.md in this directory
-- **Authoring standard:** See authoring-standard.md in this directory (voice, structure, templates, frontmatter, checklists)
-- **Quality dimensions:** See quality-dimensions.md in this directory (0-5 review lens per vector)
-- **Curation procedures:** See curation-procedures.md in this directory (add/review/remove content)
+- **Construct details:** See references/construct-guide.md
+- **Behavioral patterns:** See behavioral-patterns.md
+- **Authoring standard:** See authoring-standard.md (voice, structure, templates, frontmatter, checklists)
+- **Quality dimensions:** See references/quality-dimensions.md (0-5 review lens per vector)
+- **Curation procedures:** See references/curation-procedures.md (add/review/remove content)
+- **Review guide:** See references/review-guide.md (three-level review criteria)
+- **Audit script:** See scripts/pack-audit.sh (structural metrics extraction)
 - **TDD cycle:** If a test-driven-development skill is available (e.g., from a co-distributed pack), invoke it for the RED-GREEN-REFACTOR methodology. If not, the TDD Loop section above is self-contained.

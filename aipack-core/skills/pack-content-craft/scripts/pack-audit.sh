@@ -20,21 +20,32 @@ find "$root" \( -path "*/rules/*.md" -o -path "*/skills/*.md" -o -path "*/workfl
     # Frontmatter boundary (second --- line)
     fm_end=$(awk '/^---$/{n++; if(n==2){print NR; exit}}' "$f")
 
-    # Required fields
+    # Frontmatter is required on rules, workflows, agents, and SKILL.md entry points.
+    # Supporting files within skill directories (references/, scripts/, facets) are exempt.
     notes=""
-    if [[ -n "$fm_end" ]]; then
-        fm=$(head -n "$fm_end" "$f")
-        missing=""
-        echo "$fm" | grep -q '^name:'          || missing="${missing}name "
-        echo "$fm" | grep -q '^description:'   || missing="${missing}desc "
-        echo "$fm" | grep -q 'owner:'          || missing="${missing}owner "
-        echo "$fm" | grep -q 'last_updated:'   || missing="${missing}updated "
-        fm_ok=$([[ -z "$missing" ]] && echo "ok" || echo "MISS")
-        [[ -n "$missing" ]] && notes="missing: ${missing% }"
+    fm=""
+    needs_fm=false
+    case "$rel" in
+        rules/*|workflows/*|agents/*|skills/*/SKILL.md) needs_fm=true ;;
+    esac
+
+    if $needs_fm; then
+        if [[ -n "$fm_end" ]]; then
+            fm=$(head -n "$fm_end" "$f")
+            missing=""
+            echo "$fm" | grep -q '^name:'          || missing="${missing}name "
+            echo "$fm" | grep -q '^description:'   || missing="${missing}desc "
+            echo "$fm" | grep -q 'owner:'          || missing="${missing}owner "
+            echo "$fm" | grep -q 'last_updated:'   || missing="${missing}updated "
+            fm_ok=$([[ -z "$missing" ]] && echo "ok" || echo "MISS")
+            [[ -n "$missing" ]] && notes="missing: ${missing% }"
+        else
+            fm_ok="NONE"
+            notes="no frontmatter"
+        fi
     else
-        fm_ok="NONE"
-        fm=""
-        notes="no frontmatter"
+        fm_ok="-"
+        [[ -n "$fm_end" ]] && fm=$(head -n "$fm_end" "$f")
     fi
 
     # Budget check (rules: 60, SKILL.md: 500)
