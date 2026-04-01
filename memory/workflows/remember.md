@@ -3,7 +3,7 @@ name: remember
 description: Capture knowledge into persistent memory — for strategic context, decisions, known issues, and observations not yet ready for pack content
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-23
+  last_updated: 2026-04-01
 ---
 
 # Remember
@@ -53,6 +53,13 @@ Why: Pack content requires deliberate craft — format constraints, validation, 
    - Concise, factual, link to source if applicable
    - No imperative voice or trigger-action format — that's pack content format
    - For corrections: show old text and replacement
+
+   Quality bar — every memory file must answer: **why does this matter to a future session?** A bare fact without context ("X uses port 8080") won't help. Include:
+   - **Why it matters** — what goes wrong without this knowledge, or what decision it informs
+   - **When it applies** — what task or situation makes this relevant
+   - **How to verify** — how a future session can check if this is still true
+
+   If you can't articulate why a future session needs it, it's conversation context, not memory.
 
    For pack candidate flags — append to `~/.config/aipack/memory-bank/pack-candidates.md`:
    ```
