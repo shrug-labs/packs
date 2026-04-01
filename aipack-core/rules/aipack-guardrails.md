@@ -3,7 +3,7 @@ name: aipack-guardrails
 description: SSOT editing, sync discipline, and content routing rules for pack authoring
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-23
+  last_updated: 2026-03-31
 ---
 
 # aipack Guardrails
@@ -11,7 +11,7 @@ metadata:
 ## Editing pack content
 
 - Pack source at `~/.config/aipack/packs/<pack>/` is the SSOT — edit here, never in harness locations (`~/.claude/`, `.opencode/`, etc.)
-- Before writing or modifying any pack content, invoke the pack-content-craft skill
+- Before writing or modifying any pack content, invoke the pack-content-craft skill at the start of the first writing step — not after drafting, not after review. "We already know what to write" and "I'll invoke it after I get the draft down" are the common rationalizations; both are process violations.
 - No content without observed behavioral evidence — if you haven't seen the agent fail without it, you haven't earned it
 - No vague guidance: "consider", "be careful", "or equivalent", "as appropriate" → rewrite with decision trees or exact instructions
 - Harness-specific rendering bugs belong in the sync tool (`internal/harness/<name>/`), not in pack source. Pack source is portable SSOT — if a harness renders something wrong, fix the harness adapter.

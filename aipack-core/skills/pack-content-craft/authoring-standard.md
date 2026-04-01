@@ -246,6 +246,8 @@ metadata:
 ### Skills
 
 - Keep the skill self-contained; prefer `./...` references within the skill folder.
+- Bundle supporting data in `references/` — API patterns, checklists, specs, inventories that the skill needs at activation. These load only when the skill activates (progressive disclosure).
+- Bundle executable helpers in `scripts/` and templates/resources in `assets/`.
 - Include at least one deterministic verification step.
 
 ### Workflows

@@ -129,11 +129,23 @@ Every line changes behavior. No hedging. No prose.
 - SKILL.md body: <500 lines. Split heavy reference to separate files.
 - Never summarize methodology in description (causes shortcutting — see CSO in SKILL.md)
 
+**Skill directory structure:**
+```
+my-skill/
+├── SKILL.md          # Required: instructions + metadata
+├── scripts/          # Optional: executable code
+├── references/       # Optional: supporting data the skill needs at activation
+└── assets/           # Optional: templates, resources
+```
+
+Reference data that a skill consumes at activation time (API patterns, checklists, inventories, specs) belongs in `references/`, not in external knowledge stores. Progressive disclosure means these files only load when the skill activates — zero token cost otherwise. If reference data exists outside a skill but is only useful when that skill is active, move it into the skill.
+
 **Anti-patterns:**
 - Skills that are really rules (always-needed guidance disguised as optional)
 - Skills that are really workflows (step-by-step processes disguised as knowledge)
 - Descriptions that summarize the skill's workflow (causes shortcutting)
 - Vague descriptions that match too broadly or too narrowly
+- Reference data stored in flat external directories when it belongs colocated with a specific skill
 
 ---
 

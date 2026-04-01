@@ -3,7 +3,7 @@ name: extract-memory-to-packs
 description: Extract stable knowledge from memory-bank and external memory sources into governed pack content
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-23
+  last_updated: 2026-03-31
 ---
 
 # Extract Memory to Packs
@@ -44,10 +44,17 @@ Crystallize knowledge from `~/.config/aipack/memory-bank/` into pack content (ru
 
    Weight the scan toward high-value constructs: skills (methodology, frameworks, decision trees) carry the most knowledge and are hardest to discover by pattern-matching. Workflows (repeatable processes) are next. Rules (trigger-action pairs) are easiest to spot but often produce low-value one-liner additions. Don't let rule-hunting crowd out skill and workflow extraction.
 
+   For feedback files that overlap with existing pack content, compare the memory file's `metadata.last_updated` (or filesystem mtime if frontmatter is missing) against the target pack content's migration/update date. If the feedback is newer, classify it as **strengthen existing pack content** rather than **already migrated**.
+
+   **Content boundary gate:** Before assigning a target pack, verify the content doesn't cross the pack's distribution boundary. Packs distributed via public registries (e.g., GitHub) cannot contain internal content — hostnames, team names, tool names, employee info, org-specific operational data. Reference data about internal systems must route to internal packs or stay in memory. If unsure, check for a pack-ownership or similar reference in memory-bank that maps packs to their distribution boundaries.
+
+   This also applies to skill `references/` subdirectories. A reference file bundled into a public skill is published with that skill. Internal reference data belongs in internal skill references, not public ones.
+
    Present the classification table to the user with:
    - Source file and section
    - Proposed classification
    - Target pack and construct (if promoting)
+   - Distribution boundary (public-safe / internal-only)
    - Confidence level (high/medium/low)
 
    Wait for approval before proceeding.
@@ -109,3 +116,4 @@ Crystallize knowledge from `~/.config/aipack/memory-bank/` into pack content (ru
 - **Existing pack content overlaps**: Extend the existing content. Do not create a parallel file. Check with Grep before writing.
 - **aipack sync fails after adding content**: Check pack.json syntax and file paths. Run `aipack doctor` for diagnostics.
 - **User rejects classification**: Adjust and re-present. The user's judgment on readiness overrides automated classification.
+- **Content crosses distribution boundary**: Internal reference data routed to a public pack. Re-route to an internal pack, create a new internal skill to host it, or leave in memory-bank until an appropriate internal skill exists.
