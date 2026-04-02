@@ -74,8 +74,8 @@ packs:
 packs:
   - name: pack-name
     rules:
-      include: null          # null = include all rules from this pack
-      include: []            # empty array = include NO rules
+      include: null          # null/omitted = include all (normal pack) or nothing (quiet pack)
+      include: []            # empty array = include all (backward compat; same as null for normal packs)
       include: ["rule-name"] # specific rules only
       exclude: ["rule-name"] # all except these
     skills:
@@ -101,8 +101,9 @@ When a pack entry should include all content, omit the vector sections entirely:
       enabled: true
 ```
 
-- Omitting `rules:`, `skills:`, etc. means "include everything" — same as `include: null` but without ceremony.
-- **Footgun:** `include: []` (empty list) means "include NOTHING" — it silently blocks all content from that vector.
+- Omitting `rules:`, `skills:`, etc. means "include everything" for normal packs, "include nothing" for quiet packs.
+- `include: []` (empty list) is treated as "include all" for backward compatibility — it does NOT mean "include nothing." This is a common misunderstanding.
+- Quiet packs (`quiet: true` on the pack entry) flip the default: omitted or empty selectors resolve to nothing. Only an explicit non-empty `include` list activates content.
 - Only add `include:`/`exclude:` sections when you need to filter specific items.
 
 ### Settings exclusivity

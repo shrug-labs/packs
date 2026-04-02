@@ -114,4 +114,4 @@ CC commands also support: `argument-hint`, `disable-model-invocation`, `user-inv
 | `last_updated` | Last meaningful edit date | `2026-03-09` |
 | `harnesses` | Harnesses tested with (informational) | `claudecode, opencode` |
 
-All `metadata` fields are stripped at sync time. No harness reads them. They exist for humans, pack tooling, and governance (pack-governance tier reviews).
+All `metadata` fields are stripped at sync time. No harness reads them. They exist for humans, pack tooling, and governance (tier reviews per governance-criteria in pack-content-craft).

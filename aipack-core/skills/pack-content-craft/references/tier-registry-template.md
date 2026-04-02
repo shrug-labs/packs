@@ -27,4 +27,4 @@ Every Tier A row must include:
 ## Governance
 
 - Review frequency: weekly or per the pack's governance cycle.
-- Demotion triggers and promotion criteria: see `rules/pack-governance.md` in aipack-core.
+- Demotion triggers and promotion criteria: see `governance-criteria.md` in this directory.

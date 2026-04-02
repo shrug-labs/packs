@@ -1,17 +1,6 @@
----
-name: pack-governance
-description: Tier model, admission criteria, and demotion triggers for pack resources
-metadata:
-  owner: shrug-labs
-  last_updated: 2026-03-09
----
+# Governance Criteria
 
-# Pack Governance
-
-## When to apply
-
-- Adding, modifying, or removing any resource in a pack.
-- Reviewing a pack for stale or unused content.
+Tier model, admission criteria, and demotion triggers for pack resources. Loaded when pack-content-craft is invoked — not always-on.
 
 ## Principles
 

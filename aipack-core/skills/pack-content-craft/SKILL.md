@@ -155,6 +155,7 @@ description: Use when creating, editing, or reviewing any pack content (rules, s
 - **Construct details:** See references/construct-guide.md
 - **Behavioral patterns:** See behavioral-patterns.md
 - **Authoring standard:** See authoring-standard.md (voice, structure, templates, frontmatter, checklists)
+- **Governance criteria:** See references/governance-criteria.md (tier model, BiC cap, admission/demotion)
 - **Quality dimensions:** See references/quality-dimensions.md (0-5 review lens per vector)
 - **Curation procedures:** See references/curation-procedures.md (add/review/remove content)
 - **Review guide:** See references/review-guide.md (three-level review criteria)
