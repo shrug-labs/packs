@@ -1,67 +1,75 @@
 # OpenCode harness
 
-## Commands / workflows (slash commands)
+## Where config lives
 
-OpenCode supports custom commands defined either in config JSON or as Markdown files.
+| Scope | Location |
+|---|---|
+| Global | `~/.config/opencode/opencode.json` |
+| Global TUI | `~/.config/opencode/tui.json` |
+| Project | `./opencode.json` or `.opencode/` |
+| Remote | `.well-known/opencode` endpoint |
+| Inline | `OPENCODE_CONFIG_CONTENT` env var |
 
-### Where they live (scoping)
+Override paths: `OPENCODE_CONFIG`, `OPENCODE_CONFIG_DIR`, `OPENCODE_TUI_CONFIG` env vars.
+
+Precedence: Remote > Global > Custom > Project > .opencode > Inline. Configs are merged, not replaced.
+
+Variable substitution in config values: `{env:VAR}`, `{file:path/to/file}`.
+
+## Rules / instructions
+
+- Global: `~/.config/opencode/AGENTS.md`
+- Project: `AGENTS.md` at project root
+- Legacy: reads `CLAUDE.md` (project and `~/.claude/CLAUDE.md`) if no AGENTS.md exists
+- Additional: `instructions` array in `opencode.json` (file paths, globs, remote URLs)
+
+## Agents
+
+- Global: `~/.config/opencode/agents/*.md`
+- Project: `.opencode/agents/*.md`
+- Any `*.md` under `agents/` is treated as an agent definition — keep docs elsewhere
+- `description` is required; missing descriptions make agents disappear from listings
+- Key fields: `tools` + `permission` (ask/allow/deny), `model`, `mode` (`primary`/`subagent`/`all`), `steps`, `temperature`
+
+## Skills
+
+- Global: `~/.config/opencode/skills/`, `~/.agents/skills/`
+- Project: `.opencode/skills/`
+- `skills.paths` in `opencode.json` includes additional skill directories
+- Built-in `skill` tool for invocation
+
+## Commands (workflows)
 
 - Global: `~/.config/opencode/commands/`
-- Per-project: `.opencode/commands/`
+- Project: `.opencode/commands/`
+- Filename becomes command name (e.g., `test.md` → `/test`)
+- Frontmatter: `description`, `agent`, `subtask`, `model`
+- Template features: `$ARGUMENTS`, `$1`..., `@path/to/file`, `` !`shell command` ``
 
-The filename becomes the command name (e.g., `test.md` → `/test`).
+## MCP
 
-### Command options
+Configured in `opencode.json`. Tool control via per-agent `tools` (boolean map, deprecated) or `permission` (per-tool allow/deny).
 
-Commands can set:
-- `description` (shown in the UI)
-- `agent` (which agent runs the command)
-- `subtask` (force subagent execution to keep primary context clean)
-- `model` (override model)
+## Plugins
 
-The Markdown body is the prompt template.
+Configured via `plugin` array in `opencode.json`.
 
-### Prompt template features
+## Introspection (CLI)
 
-- `$ARGUMENTS`, `$1`, `$2`, ... for arguments
-- `@path/to/file` to inline file content
-- `` !`shell command` `` to inline shell output (runs in project root)
+- `opencode debug paths` — resolved config/data/cache/log/state roots
+- `opencode debug scrap` — known projects/worktrees
+- `opencode debug agent <name>` — resolved agent config
+- `opencode session list` — project-scoped sessions
+- `opencode export <id>` / `opencode import <file>` — session portability
 
-Docs: https://opencode.ai/docs/commands/
+## Built-in tools
 
-## Where config lives
-- Global: `~/.config/opencode/opencode.json`
-- Project: `./opencode.json` or `.opencode/` directories (project-local)
-
-Agent definitions (recommended):
-- Global: `~/.config/opencode/agents/*.md`
-- Per-project: `.opencode/agents/*.md`
-
-Naming constraint: any `*.md` under `agents/` is treated as an agent definition. Keep docs elsewhere.
-
-## Key knobs
-- `tools` (availability) + `permission` (ask/allow/deny): keep global default-deny; grant per-agent.
-- `instructions`: include your pack's synced rules directory (sync appends this to `opencode.json`; `AGENTS.md` remains in effect).
-- `skills.paths`: include your pack's skills directory (sync appends this to `opencode.json`; no skill file copies).
-
-## Session / storage introspection (CLI)
-- `opencode debug paths` (resolved roots: config/data/cache/log/state)
-- `opencode debug scrap` (list known projects/worktrees)
-- `opencode session list` (project-scoped session listing)
-- `opencode export <sessionID>` / `opencode import <file-or-share-url>` (portability)
-
-## Common gotchas
-- Agent `description` is required; missing descriptions can make agents "disappear" from listings.
-- Prefer Markdown agents for ops roles (easier to read/review than JSON).
-
-## Write gate (policy)
-
-Any write action requires an explicit user token:
-- `WRITE_INTENT: <scope> <reason>`
+bash, edit, write, read, grep, glob, list, lsp (experimental), apply_patch, skill, todowrite, webfetch, websearch, question.
 
 ## Authoritative docs
-- Config precedence + locations: https://opencode.ai/docs/config/
-- Tools + permissions: https://opencode.ai/docs/tools/
+- Config: https://opencode.ai/docs/config/
+- Tools: https://opencode.ai/docs/tools/
 - Agents: https://opencode.ai/docs/agents/
-- Rules (`instructions` + `AGENTS.md`): https://opencode.ai/docs/rules/
-- Config schema (`skills.paths`): https://opencode.ai/config.json
+- Rules: https://opencode.ai/docs/rules/
+- Commands: https://opencode.ai/docs/commands/
+- Config schema: https://opencode.ai/config.json

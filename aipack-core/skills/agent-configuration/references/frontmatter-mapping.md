@@ -56,16 +56,16 @@ Destination: `.claude/skills/<name>/SKILL.md` | `.opencode/skills/<name>/SKILL.m
 
 | Pack field | Claude Code | OpenCode | Codex | Cline |
 |---|---|---|---|---|
-| `name` | **required** | derived from filename | TOML key | N/A |
+| `name` | **required** | derived from filename | TOML key (filename) | N/A |
 | `description` | **required** | recommended | TOML `description` | N/A |
 | `skills` | `skills:` (YAML list) | not supported | not supported | N/A |
 | `mcp_servers` | `mcpServers:` (camelCase) | not supported natively | not supported | N/A |
-| `disallowed_tools` | `disallowedTools:` (camelCase, comma string) | mapped to `permission` deny rules | not directly supported | N/A |
-| `metadata` | stripped | stripped | N/A | N/A |
+| `disallowed_tools` | `disallowedTools:` (camelCase, comma string) | mapped to `permission` deny rules | TOML array | N/A |
+| `metadata` | stripped | stripped | stripped | N/A |
 
-Destination: `.claude/agents/*.md` | `.opencode/agents/*.md` | role in `config.toml` `[agents.<name>]` | N/A
+Destination: `.claude/agents/*.md` | `.opencode/agents/*.md` | `.agents/*.toml` (converted from markdown) | N/A
 
-Cline has no agent construct. Codex uses TOML role definitions, not markdown agents.
+Cline has no agent construct. Codex agents are TOML files — aipack converts markdown agent definitions to `.toml` format at sync time.
 
 #### Harness-specific agent fields (not in portable schema)
 
@@ -101,7 +101,7 @@ CC commands also support: `argument-hint`, `disable-model-invocation`, `user-inv
 |---|---|
 | Claude Code | snake_case → camelCase, tools list → comma string, PascalCase tool names |
 | OpenCode | tools list → bool map (deprecated path), preserves snake_case |
-| Codex | content flattened into `AGENTS.override.md`, MCP into `config.toml` TOML tables |
+| Codex | Rules flattened into `AGENTS.override.md`, agents converted to `.agents/*.toml`, MCP into `config.toml` TOML tables |
 | Cline | harness-neutral format, MCP into `cline_mcp_settings.json` |
 
 ## What `metadata` contains

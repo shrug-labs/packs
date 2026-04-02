@@ -46,7 +46,7 @@ For each harness-adjacent concept in the content:
 
 1. **Universal concept** (projects, sessions, working directories, subagents, test commands) → use the generic term. Add harness variants parenthetically when disambiguation helps: "working directory or workspace."
 2. **Harness-specific concept** (conversation forking, resume commands, specific tool names) → describe the goal, not the mechanism. Use conditionals: "If your harness supports conversation branching." When examples help, span harness types rather than defaulting to one.
-3. **Content about harness configuration** (agent-configuration skill, aipack-system, harness-capability-matrix) → being harness-specific is correct. Name the real paths and tools.
+3. **Content about harness configuration** (agent-configuration skill, harness-capability-matrix) → being harness-specific is correct. Name the real paths and tools.
 
 Common violations:
 
@@ -57,7 +57,7 @@ Common violations:
 | `CLAUDE.md` as canonical repo config | "AGENTS.md (or harness equivalent)" |
 | Subagent dispatch without fallback | "subagent or fresh conversation" |
 
-When writing multi-harness examples, consult the harness-capability-matrix in the aipack-system skill for canonical terminology per harness.
+When writing multi-harness examples, consult the harness-capability-matrix in the agent-configuration skill for canonical terminology per harness.
 
 ### Content promotion hygiene
 

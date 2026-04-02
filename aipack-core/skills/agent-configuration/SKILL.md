@@ -31,8 +31,8 @@ Run these checks after any harness or pack change, and whenever behavior is surp
 | Check | Claude Code | OpenCode | Codex | Cline |
 |-------|-------------|----------|-------|-------|
 | Config/paths | Inspect `~/.claude/rules/`, `~/.claude/skills/`, `.mcp.json` | `opencode debug paths` | Inspect `AGENTS.override.md`, `config.toml` | Check `.clinerules/`, MCP settings UI |
-| Agent/tools | Review `.claude/agents/`, `.mcp.json` allowlists | `opencode debug agent <name>` | Inspect `AGENTS.override.md` tool sections | MCP settings UI → server tool lists |
-| MCP config | `cat .mcp.json` or `~/.claude/.mcp.json` | `opencode debug paths` + `opencode debug agent <name>` | N/A (no native MCP) | MCP settings in GUI |
+| Agent/tools | Review `.claude/agents/`, `settings.json` permissions | `opencode debug agent <name>` | Inspect `.agents/*.toml`, `config.toml` | MCP settings UI → server tool lists |
+| MCP config | `cat .mcp.json` or `~/.claude.json` | `opencode debug paths` + `opencode debug agent <name>` | Inspect `config.toml` `[mcp_servers]` | MCP settings in GUI |
 
 1) Confirm config/rules/skills locations match your expectation for the current repo and environment.
 2) Confirm skill discovery — the paths containing this pack’s `skills/` directory are included.
@@ -73,7 +73,7 @@ This is an umbrella skill. Load only the reference you need.
 | If you need to... | Load |
 |---|---|
 | Change tool access / MCP allowlists | `references/mcp-governance.md` |
-| Understand a specific harness | `references/harness-claudecode.md`, `harness-opencode.md`, `harness-cline.md`, `harness-codex.md`, or `harness-cursor.md` |
+| Understand a specific harness | `references/harness-claudecode.md`, `harness-opencode.md`, `harness-codex.md`, or `harness-cline.md` |
 | Map pack frontmatter to harness fields | `references/frontmatter-mapping.md` |
 | Document MCP server inventory | `references/mcp-inventory.md` |
 | Verify changes took effect | `references/validation-checklist.md` |
@@ -99,25 +99,14 @@ This is an umbrella skill. Load only the reference you need.
 - Domain-specific packs may provide their own dev/ops skills that extend this framework with org-specific MCP routing, domain workflows, and internal anchors.
 
 ## Canonical docs anchors (external)
-Claude Code
-- Config + usage: https://docs.anthropic.com/en/docs/claude-code
 
-OpenCode
-- Config precedence + locations: https://opencode.ai/docs/config/
-- Tools + permissions: https://opencode.ai/docs/tools/
-- Agents: https://opencode.ai/docs/agents/
-- AGENTS.md rules: https://opencode.ai/docs/rules/
+Claude Code: https://code.claude.com/docs/en/overview
 
-Codex (CLI/IDE)
-- Config basics: https://developers.openai.com/codex/local-config/
-- Config reference (`config.toml`): https://developers.openai.com/codex/config-reference/
-- Advanced config (profiles/overrides): https://developers.openai.com/codex/config-advanced/
-- Security model (sandbox + approvals): https://developers.openai.com/codex/security/
-- CLI flags reference: https://developers.openai.com/codex/cli/reference/
+OpenCode: https://opencode.ai/docs/config/
 
-Cline
-- MCP server configuration: https://docs.cline.bot/mcp/configuring-mcp-servers
+Codex: https://developers.openai.com/codex/config-reference/
 
-Cursor
-- MCP overview + server catalog: https://cursor.com/docs/context/mcp
+Cline: https://docs.cline.bot/
+
+Per-harness reference files in `references/` carry full doc link sets.
 

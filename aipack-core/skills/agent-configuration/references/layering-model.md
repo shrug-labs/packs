@@ -1,6 +1,6 @@
 # Layering model (portable)
 
-Use the same mental model across OpenCode/Cline/Cursor/Claude/Codex:
+Use the same mental model across Claude Code/OpenCode/Codex/Cline:
 
 1) **Rules / instructions (AGENTS.md etc.)**
    - Defines behavior, boundaries, verification discipline.
