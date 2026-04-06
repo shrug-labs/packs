@@ -37,6 +37,6 @@
     "pr-readiness-code"
   ],
   "profiles": [
-    "profiles/essentials.yaml"
+    "essentials"
   ]
 }

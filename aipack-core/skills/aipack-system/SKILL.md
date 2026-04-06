@@ -3,7 +3,7 @@ name: aipack-system
 description: Use when syncing, configuring, troubleshooting, or managing aipack packs — including sync-config, profiles, harness behaviors, and the delivery pipeline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-04-01
+  last_updated: 2026-04-05
 ---
 
 # aipack System Reference
@@ -26,27 +26,24 @@ This is a specific case of the generated-vs-authored principle: edit the input, 
 Every time you modify pack content:
 
 1. **Edit** content in pack source (`~/.config/aipack/packs/<pack>/`)
-2. **Register new content** in `pack.json` — if you created a new rule, skill, workflow, or agent file, add its name to the corresponding array in `~/.config/aipack/packs/<pack>/pack.json`. Files not listed in the manifest will NOT be synced, regardless of profile settings.
-3. **Verify sync defaults:** `cat ~/.config/aipack/sync-config.yaml`
+2. **Verify sync defaults:** `cat ~/.config/aipack/sync-config.yaml`
    - Check `defaults.profile` — which profile will be used?
    - Check `defaults.harnesses` — which harnesses will be synced?
-   - Check `defaults.scope` — global or project?
-4. **Verify active profile:** `cat ~/.config/aipack/profiles/<profile>.yaml`
+   - Check `defaults.scope` — global (default) or project?
+3. **Verify active profile:** `cat ~/.config/aipack/profiles/<profile>.yaml`
    - Which packs are enabled? (`enabled: true/false/null`)
    - Which content is included/excluded per vector?
    - Are the changes you made in a pack that's actually enabled?
-5. **Dry-run:** `aipack sync --dry-run` — preview what would change. **Confirm new content appears in the plan.** If it doesn't, check step 2.
-6. **Sync:** `aipack sync` (project scope) or `aipack sync --scope global` (user-level)
+4. **Dry-run:** `aipack sync --dry-run` — preview what would change. **Confirm new content appears in the plan.**
+5. **Sync:** `aipack sync`
    - **MUTATION:** a real sync writes managed harness files outside the conversation. Get explicit `yes` before the non-dry-run command.
-7. **Restart** harness client if needed (see below)
+6. **Restart** harness client if needed (see below)
+
+Content vectors (rules, skills, workflows, agents, prompts, profiles, registries) are auto-discovered from their standard directories. You don't need to register new files in `pack.json` unless you want to filter which IDs are included. An explicit non-empty array in the manifest acts as a filter — only listed IDs sync.
 
 ## Restart Requirements
 
 After syncing, the harness client may need a restart for changes to take effect.
-
-**This depends on two factors:**
-- **The harness** — each loads and caches content differently
-- **The vector** — always-on content vs on-demand content
 
 **General principle:**
 - Always-on content (rules, settings, MCP config, permissions) is typically loaded at session/client start → **restart needed**
@@ -56,7 +53,7 @@ After syncing, the harness client may need a restart for changes to take effect.
 
 ## Profile Mechanics
 
-Profiles control what content from which packs gets synced. This is how you toggle content on/off.
+Profiles are agent profiles — curated compositions of packs that define what the agent knows and can do. They control what content from which packs gets synced.
 
 ### Enabling/disabling packs
 
@@ -106,9 +103,19 @@ When a pack entry should include all content, omit the vector sections entirely:
 - Quiet packs (`quiet: true` on the pack entry) flip the default: omitted or empty selectors resolve to nothing. Only an explicit non-empty `include` list activates content.
 - Only add `include:`/`exclude:` sections when you need to filter specific items.
 
-### Settings exclusivity
+### Settings
 
-Only one pack per profile can have `settings.enabled: true`. If two packs claim it, `aipack sync` fails. When moving settings between packs, grep all profiles for `settings.enabled: true` on the source pack and disable it.
+Any pack with harness config files (`configs/` in the manifest) contributes base settings automatically — no `settings.enabled: true` required. Multiple packs' settings are deep-merged in profile order (first pack wins at leaf conflicts, warning emitted). Set `settings.enabled: false` on a pack entry to opt a pack out.
+
+Harness settings files are composed from three sources during sync:
+
+1. **Base templates** (from contributing packs) — the user's non-managed harness preferences. Templates must never redeclare managed keys.
+2. **Computed managed keys** — MCP server configs, permissions, content paths, agent definitions. Entirely determined by aipack processing pack content and profile resolution. These overwrite any matching keys from templates.
+3. **Harness/user edits on disk** — preserved between syncs for keys not managed by aipack.
+
+If a template redeclares a managed key, the managed value silently overwrites it during sync — the user's preference is dropped with no warning.
+
+Plugin files (`configs.harness_plugins`) are pure copies. Same-filename plugins from different packs produce an error.
 
 ### Toggling after sync
 
@@ -135,28 +142,24 @@ packs:
 | Command | Purpose |
 |---------|---------|
 | `aipack sync --dry-run` | Preview what would change |
-| `aipack sync` | Apply pack content (project scope) |
-| `aipack sync --scope global` | Apply to user-level harness config |
-| `aipack sync --force --yes` | Overwrite all managed files, even if digest matches |
+| `aipack sync` | Apply pack content (default: global scope) |
+| `aipack sync --scope project` | Apply to current project directory |
+| `aipack sync --force --yes` | Overwrite all managed files, even conflicts |
 | `aipack doctor` | Validate pack structure and config |
 | `aipack save` | Reverse: save harness content back to pack source |
+| `aipack clean --dry-run` | Preview what clean would remove |
+| `aipack clean --yes` | Remove managed files (default: global scope) |
 | `aipack clean --scope project --yes` | Remove project-level managed files |
-| `aipack clean --scope global --yes` | Remove global managed files |
-| `aipack clean --scope project --ledger --yes` | Clean + remove `.aipack/` ledger |
+| `aipack clean --ledger --yes` | Clean + remove ledger state |
 | `aipack render` | Render pack content to standalone output directory |
-| `aipack pack create <dir>` | Scaffold a new pack directory with pack.json |
-
-### Sync skip behavior
-
-`aipack sync` compares the digest of each harness file against the pack source. If they match, it prints `skip(existing)` and does nothing. This means:
-- After editing pack source, you need `--force` if the harness copy's digest still matches (e.g., the harness copy was synced before your edit but the file wasn't modified in-place).
-- When in doubt after editing pack source: `aipack sync --force --scope global --yes`
+| `aipack pack create <name>` | Scaffold a new pack directory with pack.json |
+| `aipack pack install <name-or-url>` | Install a pack from registry, URL, or local path |
+| `aipack pack update --all` | Update all installed packs from their origins |
 
 ### Scope and targeting
 
-- `--scope global` — writes to `~/` prefixed locations (user-level config)
-- `--scope project` (default) — writes to current project directory
-- **Note:** Always pass `--scope` explicitly (see Troubleshooting below)
+- `--scope global` (default) — writes to `~/` prefixed locations (user-level config)
+- `--scope project` — writes to current project directory
 - `--harness <name>` — target specific harness (claudecode, opencode, codex, cline)
 - `--profile <name>` — use specific profile (overrides sync-config default)
 - `--profile-path <path>` — use a profile file outside config directory
@@ -167,57 +170,37 @@ Do NOT sync both `--scope global` and `--scope project` for the same project. Cl
 
 Pick one scope per project. For workspace-meta repos, use global only.
 
+### Bundled content (`--with` / `-w`)
+
+Core content (rules, skills, workflows, agents, prompts, MCP, configs) is always installed. Packs can also bundle profiles, registries, and extras — these are gated by `--with`:
+
+- `-w all` — accept all bundled content
+- `-w profiles` / `-w p` — apply bundled profiles
+- `-w registries` / `-w r` — merge bundled registry entries
+- `-w extras` / `-w e` — keep bundled extras (scripts, data files)
+
+Remote installs without `--with` preview bundled content then strip it. Local installs accept everything by default.
+
 ### OpenCode settings vs plugin files
 
 - In pack manifests, `configs.harness_settings.opencode` maps to `opencode.json`.
 - `configs.harness_plugins.opencode` maps to `oh-my-opencode.json`.
 - For OpenCode, `--skip-settings` skips `opencode.json` but does **not** skip `oh-my-opencode.json`.
-- If you update OpenCode model or plugin behavior, verify both pack source files before syncing.
-
-### OpenCode global verification checklist
-
-Use this exact sequence when OpenCode config changes are supposed to land in `~/.config/opencode/`:
-
-1. Read `~/.config/aipack/sync-config.yaml` and the active profile to confirm `opencode` + `global` are intended.
-2. Confirm the source files in the pack:
-   - `configs/opencode/opencode.json`
-   - `configs/opencode/oh-my-opencode.json`
-3. Dry-run the exact target:
-   - `aipack sync --profile <name> --harness opencode --scope global --dry-run`
-4. After explicit approval, run the real sync:
-   - `aipack sync --profile <name> --harness opencode --scope global --force --yes`
-5. Read back both managed outputs:
-   - `~/.config/opencode/opencode.json`
-   - `~/.config/opencode/oh-my-opencode.json`
-6. If model pins were the reason for the change, grep both source and output for old model names to prove cleanup.
-7. Restart OpenCode if the changed behavior is always-on or plugin-driven.
-
-### Clean details
-
-`aipack clean` removes only files tracked in the sync ledger — non-managed files (e.g., `settings.local.json`, memory directories) are untouched.
-
-- No `--dry-run` flag — read `.aipack/ledger.json` to preview what would be removed
-- `--ledger` also deletes the `.aipack/` directory itself
-- `--yes` skips confirmation (required in non-interactive contexts)
-- `--harness <name>` cleans only one harness
 
 ## Harness Write Targets
 
 Each harness writes content to different locations:
 
-| Vector | Claude Code | OpenCode |
-|--------|-------------|----------|
-| Rules | `.claude/rules/` | `.opencode/rules/` |
-| Skills | `.claude/skills/<name>/` | `.opencode/skills/<name>/` |
-| Workflows | `.claude/commands/` | `.opencode/commands/` |
-| Agents | `.claude/agents/` | `.opencode/agents/` |
-| MCP | `.mcp.json` | `opencode.json` |
-| Settings | `settings.local.json` | `opencode.json` |
-| Plugin config | N/A | `oh-my-opencode.json` |
+| Vector | Claude Code | OpenCode | Codex | Cline |
+|--------|-------------|----------|-------|-------|
+| Rules | `.claude/rules/` | `.opencode/rules/` | `AGENTS.override.md` | `.clinerules/` |
+| Skills | `.claude/skills/` | `.opencode/skills/` | `.agents/skills/` | `.agents/skills/` |
+| Agents | `.claude/agents/` | `.opencode/agents/` | Native TOML | `.agents/skills/` |
+| Workflows | `.claude/commands/` | `.opencode/commands/` | `.agents/skills/` | `.clinerules/workflows/` |
+| MCP | `.mcp.json` | `opencode.json` | `config.toml` | Global VS Code storage |
+| Settings | `settings.local.json` | `opencode.json` | `config.toml` | N/A |
 
 Global scope prefixes with `~/` (e.g., `~/.claude/rules/`). Project scope writes to the project directory.
-
-**Codex** flattens rules + agents into a single `AGENTS.override.md` file.
 
 ## Pack Manifest (pack.json)
 
@@ -226,18 +209,25 @@ Global scope prefixes with `~/` (e.g., `~/.claude/rules/`). Project scope writes
   "schema_version": 1,
   "name": "pack-name",
   "version": "YYYY.MM.DD",
-  "root": ".",
-  "rules": ["rule-name"],
-  "skills": ["skill-name"],
-  "workflows": ["workflow-name"],
-  "agents": ["agent-name"],
-  "profiles": ["profiles/name.yaml"],
+  "root": "."
+}
+```
+
+Content vectors are auto-discovered from standard directories. Explicit arrays act as filters:
+
+```json
+{
+  "rules": ["rule-one", "rule-two"],
+  "skills": ["deploy"],
+  "profiles": ["dev", "lean"],
+  "registries": ["team-tools"],
+  "extras": ["scripts/run-server.sh", "data"],
   "mcp": { "servers": { ... } },
   "configs": { "harness_settings": { ... } }
 }
 ```
 
-Content listed in pack.json is what's available to profiles. If it's not in the manifest, it won't be synced regardless of profile settings.
+All content fields use bare IDs (e.g., `"profiles": ["dev"]` corresponds to `profiles/dev.yaml`). Extras are the exception — they use relative paths because they can reference files outside standard directories.
 
 `default_allowed_tools` in pack.json only scopes MCP servers that the pack itself defines in its `mcp.servers` section. It cannot restrict tools on servers defined by another pack. Cross-pack tool scoping belongs in the profile's per-server `allowed_tools` entries.
 
@@ -245,40 +235,33 @@ Content listed in pack.json is what's available to profiles. If it's not in the 
 
 | File | Purpose |
 |------|---------|
-| `~/.config/aipack/sync-config.yaml` | Sync defaults (profile, harness, scope) + installed packs registry |
+| `~/.config/aipack/sync-config.yaml` | Sync defaults (profile, harness, scope) + installed packs metadata |
 | `~/.config/aipack/profiles/<name>.yaml` | Profile: which packs/content to sync |
 | `~/.config/aipack/packs/<name>/pack.json` | Pack manifest |
 | `~/.config/aipack/packs/<name>/` | Pack content source (SSOT) |
+| `~/.config/aipack/registries/` | Cached remote registry sources |
+| `~/.config/aipack/ledger/` | Sync state — file digests, provenance |
 
-## Registry and Pack Installation
+## Pack Installation
 
 | Command | Purpose |
 |---------|---------|
-| `aipack registry fetch` | Clone upstream repo and merge entries into local registry |
-| `aipack pack install <name>` | Install pack by registry name (resolves from local registry) |
+| `aipack registry fetch` | Fetch and cache remote registry sources |
+| `aipack pack install <name>` | Install pack by registry name |
+| `aipack pack install --url <url>` | Install from a git URL |
+| `aipack pack install <path>` | Install from a local directory (symlink by default) |
+| `aipack pack install -m` | Install all missing packs from the active profile |
 | `aipack pack delete <name>` | Remove installed pack |
-| `aipack pack add <name>` | Register installed pack in active profile |
-
-- The SSOT registry lives in the upstream repo, not `~/.config/aipack/registry.yaml`. Edit upstream, push, then `aipack registry fetch`.
-- To convert a local/copy pack to clone-based: `aipack pack delete <name>` then `aipack pack install <name>`.
-- Reinstalled packs register in the sync-config default profile, which may differ from the profile they were previously in.
+| `aipack pack enable <name>` | Register pack in active profile |
+| `aipack pack disable <name>` | Remove pack from active profile |
 
 ### Profile params after install
 
-When a new profile is the active default, carry over `params` from any previous profile — otherwise MCP servers with `{params.*}` references will be skipped with unresolved param warnings.
+When switching to a new profile, carry over `params` from any previous profile — otherwise MCP servers with `{params.*}` references will be skipped with unresolved param warnings.
 
-### Skill collisions
+### Content collisions
 
-When two packs ship a skill with the same ID (e.g., `agent-configuration` in two different packs), sync fails. Fix by excluding the duplicate in the profile: `skills.exclude: [skill-name]`.
-
-## Troubleshooting
-
-### sync-config defaults not respected
-
-`sync-config.yaml` `defaults.scope` may not be honored by bare `aipack sync`. Always pass `--scope global` explicitly. Also: `--force` is required to update existing files when digest matching gives false "no change" results.
-
-**Canonical sync command:** `aipack sync --scope global --force --yes`
-**Canonical dry-run:** `aipack sync --scope global --force --dry-run`
+When two packs ship content with the same ID (e.g., both have `rules/anti-slop.md`), sync fails unless the later pack declares it as an override in the profile: `overrides.rules: ["anti-slop"]`.
 
 ## Personal Pack MCP Override
 
@@ -297,11 +280,10 @@ These are behavioral failures observed in real sessions. Each one wasted signifi
 
 | Anti-pattern | Correction |
 |---|---|
-| Running aipack operations without invoking aipack-system skill first | Always invoke this skill before any aipack CLI work. "I can figure it out from --help" is the rationalization the skill warns against. |
-| Ignoring sync-config values you already read | If you read a config file, extract the operational implications before acting. `scope: global` means pass `--scope global`. |
-| Hand-editing generated artifacts (registry.yaml, harness locations) | Check whether the artifact is generated or authored. Generated → find and modify the SSOT input. |
+| Running aipack operations without invoking aipack-system skill first | Always invoke this skill before any aipack CLI work. |
+| Ignoring sync-config values you already read | If you read a config file, extract the operational implications before acting. |
+| Hand-editing generated artifacts (registry cache, harness locations) | Check whether the artifact is generated or authored. Generated → find and modify the SSOT input. |
 | Proposing CLI flags without checking `--help` | Verify CLI capabilities before proposing commands. `aipack <cmd> --help` takes 2 seconds. |
-| Editing shared config without checking SSOT | Ask "where is the SSOT?" before editing any config file that might have an upstream source. |
 
 ## Content Lifecycle
 

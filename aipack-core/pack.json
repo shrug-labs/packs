@@ -20,6 +20,6 @@
     "pack-review"
   ],
   "profiles": [
-    "profiles/aipack-core.yaml"
+    "aipack-core"
   ]
 }

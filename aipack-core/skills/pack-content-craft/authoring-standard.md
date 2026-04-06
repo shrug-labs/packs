@@ -19,6 +19,7 @@ Write in consumer-facing, prescriptive language.
 - State obligations with "must / must not".
 - Put constraints and required outputs before the steps.
 - Never write meta-breaking prose ("as an AI/agent...", "I will...", "here is my thought process...").
+- Never use contrived scenario framing ("you might have...", "imagine you...", "say you have..."). State what the thing is, state what it does, use real code examples to illustrate. If a concept needs a use case, put it in a dedicated example section — not woven into the opener as narrative scaffolding.
 
 Examples:
 
@@ -258,6 +259,8 @@ metadata:
 - Bundle supporting data in `references/` — API patterns, checklists, specs, inventories that the skill needs at activation. These load only when the skill activates (progressive disclosure).
 - Bundle executable helpers in `scripts/` and templates/resources in `assets/`.
 - Include at least one deterministic verification step.
+- Order examples deliberately. The first example in any list, table, or code block becomes the agent's implicit default. Put the preferred or most common case first.
+- Test examples against sibling categories. If an example name could plausibly belong in another construct type, category, or section, pick a different example. Ambiguous examples undermine the classification they're meant to illustrate.
 
 ### Workflows
 
@@ -272,7 +275,16 @@ metadata:
 
 ### Docs
 
+- Structure documentation around reader journey, not content taxonomy. Ask "what is the reader trying to do?" not "what category does this content belong to?" The natural progression for tool docs: use → install advanced → create → compose → reference. Getting-started should walk through the first 10 minutes, not start with authoring.
 - Use scannable headings and put the fast path first.
 - Lead pack READMEs with install commands, not prerequisite checklists. If prerequisites matter (SSH keys, specific tooling), mention them inline near the command that needs them.
 - Do not enumerate pack contents (rules, skills, tool lists) in external docs. The pack manifest is the SSOT for inventory. Describe what the pack does and how to install it; link to the source for the authoritative listing.
 - Avoid duplicating inventories; link to canonical sources.
+- Before writing docs that describe tool or system behavior, verify claims against the source: read corresponding skill content, grep the implementation code, note discrepancies for fixes before publishing. The doc should match the code, not the skill — skills can drift too.
+
+### Changelogs
+
+- Lead with new user-facing capabilities (Added), then behavioral changes (Changed), then fixes (Fixed).
+- Order entries within each section by impact to the user, not by implementation sequence.
+- Fold implementation details into their parent feature's entry. If an internal change has no parent feature, it probably doesn't belong in the changelog.
+- Do not list internal type adjustments, omitempty changes, or nil-slice behaviors as standalone entries.

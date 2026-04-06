@@ -35,6 +35,8 @@ On-demand reference for working with the persistent memory bank at `~/.config/ai
 | `inbox/` | Harness auto-captures — fleeting notes promoted to curated directories during audits | Auto-generated files from `autoMemoryDirectory` |
 | `known-issues.md` | Fixable issues — operational blockers with known or planned resolutions (single file) | build tool version conflict, flaky test workaround |
 | `constraints.md` | Permanent external limitations — platform behaviors, policy restrictions, API quirks we work around (single file) | CI provider rate limits, SSO token expiry, third-party API pagination limits |
+| `pack-candidates.md` | Curated promotion queue — observations ready to crystallize into pack content (single file) | Entries with construct type, target pack, observed failure, priority |
+| `archive/` | Cold storage — knowledge no longer active but preserved for historical retrieval | `archive/2026-04/12-1430-aipack-sync-design.md` |
 
 ## File Format
 
@@ -46,8 +48,8 @@ name: descriptive-slug
 description: One-line summary — specific enough to decide relevance without opening the file
 type: project | reference | strategy | feedback | user
 metadata:
-  created: YYYY-MM-DD
-  last_updated: YYYY-MM-DD
+  created: 2026-04-04T14:30-08:00
+  last_updated: 2026-04-04T16:45-08:00
 ---
 ```
 
@@ -55,14 +57,16 @@ Fields:
 - `name`: matches filename without `.md` extension
 - `description`: used for scanning — be specific, not generic
 - `type`: determines retention policy and retrieval priority
-- `metadata.created`: date the file was first written
-- `metadata.last_updated`: date of most recent substantive change
+- `metadata.created`: ISO 8601 datetime with timezone offset when the file was first written
+- `metadata.last_updated`: ISO 8601 datetime with timezone offset of most recent substantive change
+
+Datetime format is `YYYY-MM-DDTHH:MM±HH:MM` — always include explicit timezone offset (e.g. `-08:00` for PST, or `Z` for UTC).
 
 Body content follows the frontmatter. Use inline status labels where applicable: `**Status:** Phase 2 complete (2026-03-09)`.
 
 Additional conventions:
 - Descriptive slugs for filenames: `aipack-core-migration.md`, not `migration.md`
-- Date stamps in content, not in filename
+- Date stamps in content, not in filename (exception: archive files use `DD-HHMM-` prefix)
 - Cross-references use relative paths within memory-bank, `~/` paths for external locations
 - `MEMORY.md` is the index file — pointers and brief descriptions only, no memory content
 
@@ -124,12 +128,73 @@ When memory-bank content is promoted to a pack:
 
 - `known-issues.md`: Remove entries when the issue is resolved. Keep the file lean. Items that turn out to be unfixable graduate to `constraints.md`.
 - `constraints.md`: Long-lived. Update workarounds as they improve. Remove only when the external binding changes (platform upgrade, policy change). Each entry has a "Bound to" field identifying what makes it permanent.
-- `projects/`: Archive or delete when the project is complete and useful knowledge has been extracted.
-- `reference/`: Delete when fully migrated to pack content. No "archive" directory.
-- `strategy/`: Long-lived. Update as direction evolves. Delete only when direction is abandoned.
-- `feedback/`: Long-lived. Remove when the correction is embedded in pack content (a rule or skill) and the memory adds no extra context.
+- `projects/`: Archive when the project is complete and useful knowledge has been extracted. Delete only if the project context has zero future retrieval value.
+- `reference/`: Archive when superseded or when historical context has value. Delete only when fully migrated to pack content and the memory adds nothing the pack doesn't carry.
+- `strategy/`: Long-lived. Update as direction evolves. Archive when direction is abandoned (the evolution of thinking has value).
+- `feedback/`: Long-lived. Delete when the correction is embedded in pack content (a rule or skill) and the memory adds no extra context. Feedback doesn't archive — the pack is the SSOT.
 - `user/`: Long-lived. Update as the user's role or preferences evolve.
 - `inbox/`: Ephemeral. Promote to curated directories during knowledge audits or session retros. Delete after promotion.
+
+## Archive
+
+Cold storage for knowledge that is no longer actively relevant but shouldn't be destroyed. A distinct tier from the active memory bank — different organization, different retrieval strategy, different access patterns.
+
+### Structure
+
+```
+archive/
+  2026-04/
+    12-1430-aipack-sync-design.md
+    18-0915-prereq-stack-v23.md
+  2026-03/
+    28-1100-old-project.md
+```
+
+- Organized by `YYYY-MM/` directories (month of archival, not creation)
+- Filenames prefixed with `DD-HHMM-` (day and time of archival) for sort order within a month
+- Original filename follows the timestamp prefix
+
+### Frontmatter
+
+Archived files retain their original frontmatter and gain:
+
+```yaml
+archived: 2026-04-12T14:30-08:00
+archive_reason: completed | superseded | promoted | stale
+```
+
+- `archived`: when the file was moved to archive
+- `archive_reason`: why it left active memory
+  - `completed` — project finished, learnings extracted
+  - `superseded` — replaced by newer strategy, design, or understanding
+  - `promoted` — content migrated to pack; archive preserves historical context the pack doesn't carry
+  - `stale` — no longer relevant but may have historical value
+
+### Retrieval
+
+The archive is pull-only. Never proactively scanned. Search the archive only when:
+
+- A topic resurfaces and active memory is insufficient
+- Doing explicit historical analysis ("what did we decide about X?")
+- A knowledge audit reveals a gap that archived content might fill
+- The user asks to recall something from a past project or decision
+
+To search: `grep -ri '<topic>' ~/.config/aipack/memory-bank/archive/`. For broader discovery within a time period: `ls ~/.config/aipack/memory-bank/archive/2026-04/` and scan filenames.
+
+### Archive vs. Delete
+
+| Situation | Archive | Delete |
+|-----------|---------|--------|
+| Completed project with extracted learnings | Yes — project context may resurface | |
+| Superseded strategy doc | Yes — evolution of thinking has value | |
+| Feedback promoted to pack content | | Yes — pack is SSOT, memory adds nothing |
+| Reference about a point-in-time understanding | Yes — historical context | |
+| Reference data that was just wrong | | Yes — no value preserving errors |
+| Stale project with no learnings extracted | Extract learnings first, then archive | |
+
+### MEMORY.md
+
+Archived files are removed from MEMORY.md. The archive is outside the active index by design.
 
 ## Verify
 

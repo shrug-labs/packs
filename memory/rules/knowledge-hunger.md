@@ -39,6 +39,7 @@ When a task touches a system you don't fully understand, learn it beyond what's 
 You are building institutional memory. Everything you learn that isn't already captured is a gift to the next session — or a gap that costs it.
 
 - Route knowledge per the memory-bank rule.
+- Err on the side of capturing. A stale note costs a future audit 30 seconds; a missing convention costs the next session a full re-discovery cycle.
 - When patterns stabilize, compose into pack content (using the pack-content-craft skill if available).
 - When you discover something that contradicts existing memory, update the memory — don't just note the contradiction.
 

@@ -223,6 +223,7 @@ When the bug involves flaky tests or race conditions:
 | "I see the problem" | Seeing symptoms is not understanding root cause. |
 | "One more attempt" (after 2+ failures) | Three-strike rule. Question the architecture. |
 | "The fix is obvious from the error" | Obvious fixes at symptom sites mask root causes upstream. |
+| "CI flagged these files, just fix them" | The check scope may be wrong. Compare what the check scans to what the tool covers. Fixing files you didn't intentionally change may be treating a symptom. |
 
 ## Red Flags
 
@@ -234,6 +235,7 @@ If you catch yourself doing any of these, STOP and return to Phase 1:
 - Saying "it's probably X" without evidence
 - Skipping the test because "it's a small change"
 - Fixing where the error appears without tracing backward
+- Formatting or fixing files you didn't intentionally change because a CI check flagged them
 
 ## Degrees of Freedom
 

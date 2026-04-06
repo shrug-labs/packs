@@ -20,6 +20,6 @@
     "extract-memory-to-packs"
   ],
   "profiles": [
-    "profiles/memory-user.yaml"
+    "memory-user"
   ]
 }

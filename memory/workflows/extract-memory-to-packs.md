@@ -27,6 +27,8 @@ Crystallize knowledge from `~/.config/aipack/memory-bank/` into pack content (ru
 
    Read all files in `~/.config/aipack/memory-bank/` curated directories (`projects/`, `reference/`, `strategy/`, `feedback/`, `user/`) and `inbox/`.
 
+   **Start with `pack-candidates.md`** — this is the curated promotion queue with structured evidence (construct type, target pack, observed failure, priority). It is the highest-signal source. Process its open (non-strikethrough) entries before scanning individual directory files.
+
    For each file, identify knowledge candidates — sections or patterns that match pack constructs rather than memory.
 
 2. **Classify each candidate**

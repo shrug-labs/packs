@@ -21,6 +21,7 @@ Location: `~/.config/aipack/memory-bank/` — lives under aipack's config direct
 | User profile knowledge | `~/.config/aipack/memory-bank/user/` | pack content |
 | Recurring issues with known fixes | `~/.config/aipack/memory-bank/known-issues.md` | pack content |
 | Permanent external limitations | `~/.config/aipack/memory-bank/constraints.md` | pack content |
+| Completed/superseded knowledge worth preserving | `~/.config/aipack/memory-bank/archive/YYYY-MM/` | active memory bank |
 | Behavioral rules, skills, workflows | `~/.config/aipack/packs/` | memory bank |
 | Repo-specific developer context | That repo's AGENTS.md (or harness equivalent) | memory bank |
 
@@ -38,20 +39,18 @@ If step 3: re-check. Does it contain trigger-action pairs, numbered steps, or a 
 
 Before starting work that involves project context, strategic direction, or operational issues — check relevant memory-bank files first. Don't rely on conversation context or inference for information that may already be captured. Use frontmatter descriptions and filenames to select; don't read everything.
 
-## File Format
-
-All files in `~/.config/aipack/memory-bank/` require YAML frontmatter. See memory-bank skill for the schema and conventions.
-
 ## Inbox Lifecycle
 
 Harness auto-captures land in `~/.config/aipack/memory-bank/inbox/`. During knowledge audits or session retros, classify and promote items to curated directories (`projects/`, `reference/`, `strategy/`, `feedback/`, `user/`). Promoted items are removed from inbox.
 
 ## Session Protocol
 
+- All files require YAML frontmatter (see memory-bank skill for schema).
 - Read existing memory-bank files before creating new ones.
 - Update on significant learning — do not wait for session end.
 - One SSOT per piece of knowledge. If it exists in a pack, do not duplicate in memory-bank.
 - Deleting memory-bank files requires user confirmation.
+- When removing active memory, prefer archiving over deletion. See memory-bank skill for archive conventions and the archive-vs-delete decision tree.
 
 ## Verify
 
