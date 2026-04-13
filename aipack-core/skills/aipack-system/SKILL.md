@@ -3,7 +3,7 @@ name: aipack-system
 description: Use when syncing, configuring, troubleshooting, or managing aipack packs — including sync-config, profiles, harness behaviors, and the delivery pipeline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-04-05
+  last_updated: 2026-04-12
 ---
 
 # aipack System Reference
@@ -151,6 +151,7 @@ packs:
 | `aipack clean --yes` | Remove managed files (default: global scope) |
 | `aipack clean --scope project --yes` | Remove project-level managed files |
 | `aipack clean --ledger --yes` | Clean + remove ledger state |
+| `aipack clean --cache --yes` | Remove git clone cache (frees disk, next install re-downloads) |
 | `aipack render` | Render pack content to standalone output directory |
 | `aipack pack create <name>` | Scaffold a new pack directory with pack.json |
 | `aipack pack install <name-or-url>` | Install a pack from registry, URL, or local path |
@@ -235,25 +236,47 @@ All content fields use bare IDs (e.g., `"profiles": ["dev"]` corresponds to `pro
 
 | File | Purpose |
 |------|---------|
-| `~/.config/aipack/sync-config.yaml` | Sync defaults (profile, harness, scope) + installed packs metadata |
+| `~/.config/aipack/sync-config.yaml` | Sync defaults (profile, harnesses, scope, collision strategy) and registry sources |
+| `~/.config/aipack/aipack.lock` | Installed pack inventory: origin, method, ref, commit hash, version pin, drift baseline |
 | `~/.config/aipack/profiles/<name>.yaml` | Profile: which packs/content to sync |
 | `~/.config/aipack/packs/<name>/pack.json` | Pack manifest |
 | `~/.config/aipack/packs/<name>/` | Pack content source (SSOT) |
 | `~/.config/aipack/registries/` | Cached remote registry sources |
 | `~/.config/aipack/ledger/` | Sync state — file digests, provenance |
 
+Pack state lives in `aipack.lock`, not `sync-config.yaml`. To answer *which packs are installed and at what version*, read the lockfile. To answer *which profile/harnesses/scope sync uses by default*, read `sync-config.yaml`. The lockfile is rewritten on every install/update — do not hand-edit. Older configs that still carry `installed_packs:` in `sync-config.yaml` auto-migrate to the lockfile on the first v0.21+ command.
+
 ## Pack Installation
 
 | Command | Purpose |
 |---------|---------|
 | `aipack registry fetch` | Fetch and cache remote registry sources |
+| `aipack pack install` | Reconcile active profile — install any packs the profile references but disk doesn't have |
 | `aipack pack install <name>` | Install pack by registry name |
+| `aipack pack install <name>@<version>` | Install a specific semver tag and pin to it |
 | `aipack pack install --url <url>` | Install from a git URL |
 | `aipack pack install <path>` | Install from a local directory (symlink by default) |
-| `aipack pack install -m` | Install all missing packs from the active profile |
+| `aipack pack update` | Update all installed packs (parallel, bounded) |
+| `aipack pack update <name>` | Update one pack to the latest matching its pin |
+| `aipack pack versions <name>` | List available semver versions for an installed or registered pack |
 | `aipack pack delete <name>` | Remove installed pack |
-| `aipack pack enable <name>` | Register pack in active profile |
-| `aipack pack disable <name>` | Remove pack from active profile |
+| `aipack pack add <name>` | Add an installed pack to the active profile |
+| `aipack pack remove <name>` | Remove a pack from the active profile |
+
+### Version pinning
+
+Packs can be pinned to a specific semver tag, a partial semver, or a commit hash. Pins are stored in `aipack.lock` and respected by `pack update`.
+
+| Form | Resolves to | When |
+|------|-------------|------|
+| `pack install foo@1.2.3` | Exact tag `v1.2.3`, pinned | Reproducible install |
+| `pack install foo@v1` | Highest stable tag matching `v1.x.x`, pinned to that exact tag | Track a major line |
+| `pack install foo --version v1.2` | Highest stable `v1.2.x`, pinned | Track a minor line |
+| `pack install foo` | Default branch HEAD, no pin | Always latest |
+| `pack install foo --version <commit-hash>` | Exact commit, pinned | Bisect or reproduce |
+| `pack install foo --version latest` | Default branch HEAD, clears any existing pin | Unpin |
+
+`pack update <name>` against a pinned pack re-resolves the pin's matcher (e.g. `v1` finds the new highest matching tag) but preserves the pin shape. `pack update` against an unpinned pack always moves to the latest default-branch commit. `aipack doctor` reports drift between an installed pack's recorded ref and its remote head.
 
 ### Profile params after install
 
@@ -261,7 +284,7 @@ When switching to a new profile, carry over `params` from any previous profile �
 
 ### Content collisions
 
-When two packs ship content with the same ID (e.g., both have `rules/anti-slop.md`), sync fails unless the later pack declares it as an override in the profile: `overrides.rules: ["anti-slop"]`.
+When two packs ship content with the same ID (e.g., both have `rules/anti-slop.md`), the `defaults.collision_strategy` in sync-config.yaml determines what happens: `last-wins` (default — later pack in profile order wins), `first-wins` (earlier pack wins), or `error` (fail with remediation YAML). Explicit `overrides` in the profile always take precedence over the strategy: `overrides.rules: ["anti-slop"]`.
 
 ## Personal Pack MCP Override
 

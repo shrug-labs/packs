@@ -3,7 +3,7 @@ name: aipack-guardrails
 description: SSOT editing, sync discipline, and content routing rules for pack authoring
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-31
+  last_updated: 2026-04-12
 ---
 
 # aipack Guardrails
@@ -20,6 +20,7 @@ metadata:
 ## Reasoning about packs
 
 - Before reasoning about pack architecture, composition, or layering, verify against actual sync-config (`~/.config/aipack/sync-config.yaml`) and active profile (`~/.config/aipack/profiles/<default>.yaml`).
+- Before reasoning about *which packs are installed and at what version*, read `~/.config/aipack/aipack.lock` — that is the source of truth for installed pack inventory, install method, ref, commit hash, and version pin. `sync-config.yaml` no longer carries installed pack metadata.
 
 ## Syncing
 
