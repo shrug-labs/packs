@@ -265,16 +265,22 @@ Pack state lives in `aipack.lock`, not `sync-config.yaml`. To answer *which pack
 
 ### Version pinning
 
-Packs can be pinned to a specific semver tag, a partial semver, or a commit hash. Pins are stored in `aipack.lock` and respected by `pack update`.
+Packs can be pinned to an exact semver tag, a partial semver, a namespaced tag (multi-pack monorepos), or a commit hash. Pins are stored in `aipack.lock` and respected by `pack update`.
 
 | Form | Resolves to | When |
 |------|-------------|------|
 | `pack install foo@1.2.3` | Exact tag `v1.2.3`, pinned | Reproducible install |
 | `pack install foo@v1` | Highest stable tag matching `v1.x.x`, pinned to that exact tag | Track a major line |
-| `pack install foo --version v1.2` | Highest stable `v1.2.x`, pinned | Track a minor line |
+| `pack install foo --ref v1.2` | Highest stable `v1.2.x`, pinned | Track a minor line |
 | `pack install foo` | Default branch HEAD, no pin | Always latest |
-| `pack install foo --version <commit-hash>` | Exact commit, pinned | Bisect or reproduce |
-| `pack install foo --version latest` | Default branch HEAD, clears any existing pin | Unpin |
+| `pack install foo --ref <commit-hash>` | Exact commit, pinned | Bisect or reproduce |
+| `pack install foo --ref latest` | Default branch HEAD, clears any existing pin | Unpin |
+| `pack install foo@my-pack/v0.3.0` | Exact namespaced tag (multi-pack monorepo), pinned | Versioning sibling packs in one repo |
+| `pack install foo --ref main` | Track the `main` branch (any non-semver ref) | Development builds |
+
+`--ref` is the primary flag since v0.22. `--version` stays as a Kong alias for historical scripts — `--version X` is equivalent to `--ref X` on both `pack install` and `pack update`. Any git ref shape is accepted: exact semver, partial semver, namespaced semver, commit hash, `latest`, branch name, or non-semver tag. The `@<spec>` positional shorthand follows the same rules.
+
+For multi-pack monorepos: once a pack is installed at a namespaced tag (`my-pack/v0.3.0`), subsequent `pack update my-pack --ref 0.3.1` auto-inherits the `my-pack/` prefix from the lockfile — users can pass bare semver on updates without retyping the prefix. `pack versions my-pack` similarly scopes its tag listing to the installed prefix.
 
 `pack update <name>` against a pinned pack re-resolves the pin's matcher (e.g. `v1` finds the new highest matching tag) but preserves the pin shape. `pack update` against an unpinned pack always moves to the latest default-branch commit. `aipack doctor` reports drift between an installed pack's recorded ref and its remote head.
 
