@@ -132,10 +132,13 @@ packs:
   - name: pack-name
     mcp:
       server-name:
-        enabled: true           # Enable/disable this MCP server
-        allowed_tools: []       # Empty = use pack defaults
-        disabled_tools: []      # Specific tools to block
+        enabled: true                   # Enable/disable this MCP server
+        allowed_tools: []               # Tools visible to the harness (ask per call where prompted)
+        always_allowed_tools: []        # Subset auto-approved without per-call prompt
+        disabled_tools: []              # Explicit block; takes precedence over allow lists
 ```
+
+A silent profile (all three lists omitted or empty) emits no allow list to the harness, so the harness's native default applies. Use the TUI tri-state tool picker (`t` on an MCP entry in the profiles tab) to edit these lists interactively; the picker probes the server live and persists the selection back to the profile.
 
 ## Common Commands
 
@@ -223,14 +226,14 @@ Content vectors are auto-discovered from standard directories. Explicit arrays a
   "profiles": ["dev", "lean"],
   "registries": ["team-tools"],
   "extras": ["scripts/run-server.sh", "data"],
-  "mcp": { "servers": { ... } },
+  "mcp": ["server-one", "server-two"],
   "configs": { "harness_settings": { ... } }
 }
 ```
 
 All content fields use bare IDs (e.g., `"profiles": ["dev"]` corresponds to `profiles/dev.yaml`). Extras are the exception — they use relative paths because they can reference files outside standard directories.
 
-`default_allowed_tools` in pack.json only scopes MCP servers that the pack itself defines in its `mcp.servers` section. It cannot restrict tools on servers defined by another pack. Cross-pack tool scoping belongs in the profile's per-server `allowed_tools` entries.
+Tool permissions are entirely a profile concern — `pack.json` lists server IDs only. Profiles own `allowed_tools` / `always_allowed_tools` / `disabled_tools` per server. A silent profile (no allow-list entries) emits no allow list, so the harness's native default applies. Packs that want opinionated defaults ship them through a bundled profile (e.g. `profiles/default.yaml`), not the manifest. Pre-v0.23 packs use `schema_version: 1` with a nested `mcp: { servers: { ... }, default_allowed_tools: [...] }` object; they still load in v0.23+ under the dedicated v1 parser, but v1's pack-level tool policy is read and discarded — use `schema_version: 2` with a bundled profile to express tool policy.
 
 ## Configuration Locations
 
