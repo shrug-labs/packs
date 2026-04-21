@@ -100,12 +100,12 @@ When a pack entry should include all content, omit the vector sections entirely:
 
 - Omitting `rules:`, `skills:`, etc. means "include everything" for normal packs, "include nothing" for quiet packs.
 - `include: []` (empty list) is treated as "include all" for backward compatibility — it does NOT mean "include nothing." This is a common misunderstanding.
-- Quiet packs (`quiet: true` on the pack entry) flip the default: omitted or empty selectors resolve to nothing. Only an explicit non-empty `include` list activates content.
+- Quiet packs (`quiet: true` on the pack entry) flip the default across every delivery mechanism — content vectors, MCP servers, and harness settings. Omitted or empty selectors resolve to nothing; an explicit opt-in is required to activate anything (non-empty `include` list for content, an explicit `mcp:` entry per server, `settings.enabled: true` for configs). Before v0.24.0 quiet applied only to content vectors — quiet packs still contributed every manifest-declared MCP server and their `configs/` settings.
 - Only add `include:`/`exclude:` sections when you need to filter specific items.
 
 ### Settings
 
-Any pack with harness config files (`configs/` in the manifest) contributes base settings automatically — no `settings.enabled: true` required. Multiple packs' settings are deep-merged in profile order (first pack wins at leaf conflicts, warning emitted). Set `settings.enabled: false` on a pack entry to opt a pack out.
+A non-quiet pack with harness config files (`configs/` in the manifest) contributes base settings automatically — no `settings.enabled: true` required. Quiet packs opt out by default and need explicit `settings.enabled: true` on the profile entry to contribute. Multiple packs' settings are deep-merged in profile order (first pack wins at leaf conflicts, warning emitted). Set `settings.enabled: false` on a pack entry to opt a non-quiet pack out.
 
 Harness settings files are composed from three sources during sync:
 
