@@ -3,7 +3,7 @@ name: aipack-system
 description: Use when syncing, configuring, troubleshooting, or managing aipack packs — including sync-config, profiles, harness behaviors, and the delivery pipeline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-04-12
+  last_updated: 2026-05-06
 ---
 
 # aipack System Reference
@@ -39,7 +39,7 @@ Every time you modify pack content:
    - **MUTATION:** a real sync writes managed harness files outside the conversation. Get explicit `yes` before the non-dry-run command.
 6. **Restart** harness client if needed (see below)
 
-Content vectors (rules, skills, workflows, agents, prompts, profiles, registries) are auto-discovered from their standard directories. You don't need to register new files in `pack.json` unless you want to filter which IDs are included. An explicit non-empty array in the manifest acts as a filter — only listed IDs sync.
+Content vectors (rules, skills, workflows, agents, prompts, plugins, profiles, registries) are auto-discovered from their standard directories. You don't need to register new files in `pack.json` unless you want to filter which IDs are included. An explicit non-empty array in the manifest acts as a filter — only listed IDs sync.
 
 ## Restart Requirements
 
@@ -84,6 +84,9 @@ packs:
     agents:
       include: null
       exclude: null
+    plugins:
+      include: null
+      exclude: null
 ```
 
 ### Profile simplification
@@ -100,7 +103,7 @@ When a pack entry should include all content, omit the vector sections entirely:
 
 - Omitting `rules:`, `skills:`, etc. means "include everything" for normal packs, "include nothing" for quiet packs.
 - `include: []` (empty list) is treated as "include all" for backward compatibility — it does NOT mean "include nothing." This is a common misunderstanding.
-- Quiet packs (`quiet: true` on the pack entry) flip the default across every delivery mechanism — content vectors, MCP servers, and harness settings. Omitted or empty selectors resolve to nothing; an explicit opt-in is required to activate anything (non-empty `include` list for content, an explicit `mcp:` entry per server, `settings.enabled: true` for configs). Before v0.24.0 quiet applied only to content vectors — quiet packs still contributed every manifest-declared MCP server and their `configs/` settings.
+- Quiet packs (`quiet: true` on the pack entry) flip the default across every delivery mechanism — content vectors, plugin references, MCP servers, and harness settings. Omitted or empty selectors resolve to nothing; an explicit opt-in is required to activate anything (non-empty `include` list for content, an explicit `mcp:` entry per server, `settings.enabled: true` for configs). Before v0.24.0 quiet applied only to content vectors — quiet packs still contributed every manifest-declared MCP server and their `configs/` settings.
 - Only add `include:`/`exclude:` sections when you need to filter specific items.
 
 ### Settings
@@ -115,13 +118,13 @@ Harness settings files are composed from three sources during sync:
 
 If a template redeclares a managed key, the managed value silently overwrites it during sync — the user's preference is dropped with no warning.
 
-Plugin files (`configs.harness_plugins`) are pure copies. Same-filename plugins from different packs produce an error.
+Drop-in plugin files (`configs.harness_plugins`) are pure copies. Same-filename drop-ins from different packs produce an error. First-class plugin references live under `plugins/<id>.json`, are selectable through profile `plugins:` include/exclude, and sync additively to harness plugin enablement files. Removing a plugin reference from a profile stops aipack from re-asserting it but does not uninstall or disable it in the harness.
 
 ### Toggling after sync
 
 To change what's active without editing pack source:
 1. Edit the profile YAML at `~/.config/aipack/profiles/<name>.yaml`
-2. Adjust `enabled`, `include`, or `exclude` as needed
+2. Adjust `enabled`, `include`, or `exclude` as needed. Use `aipack profile refs` first when changing params or env-backed MCP/settings templates.
 3. Re-sync: `aipack sync`
 4. Restart harness client if needed
 
@@ -140,15 +143,31 @@ packs:
 
 A silent profile (all three lists omitted or empty) emits no allow list to the harness, so the harness's native default applies. Use the TUI tri-state tool picker (`t` on an MCP entry in the profiles tab) to edit these lists interactively; the picker probes the server live and persists the selection back to the profile.
 
+### Params and env refs
+
+- Use `{params.KEY}` for required profile params and `{params.KEY:-default}` for literal defaults.
+- Use `{env:KEY}` for machine-local or secret values. aipack reads `~/.config/aipack/.env` first, then the process environment.
+- Check required values with `aipack profile refs` or the shorter `aipack setup`.
+- Set stable params with `aipack profile set-param <profile> <key> <value>`.
+- Set local env values with `aipack config env set KEY VALUE`; inspect the file path with `aipack config env path`.
+
 ## Common Commands
 
 | Command | Purpose |
 |---------|---------|
+| `aipack setup` | Show missing params/env values before sync |
 | `aipack sync --dry-run` | Preview what would change |
 | `aipack sync` | Apply pack content (default: global scope) |
 | `aipack sync --scope project` | Apply to current project directory |
 | `aipack sync --force --yes` | Overwrite all managed files, even conflicts |
 | `aipack doctor` | Validate pack structure and config |
+| `aipack config env list|get|set|unset|path|edit` | Manage config-local `.env` values for `{env:*}` |
+| `aipack profile refs` | Check profile params/env refs |
+| `aipack profile set-param <profile> <key> <value>` | Set a profile param |
+| `aipack profile unset-param <profile> <key>` | Remove a profile param |
+| `aipack search --status installed\|registered\|inspected` | Filter discovery results by pack status |
+| `aipack search --kind rule\|skill\|workflow\|agent\|prompt\|mcp\|plugin` | Filter discovery by content kind |
+| `aipack trace <name>` | Resolve an active-profile resource by name (no resource type required when unambiguous) |
 | `aipack save` | Reverse: save harness content back to pack source |
 | `aipack clean --dry-run` | Preview what clean would remove |
 | `aipack clean --yes` | Remove managed files (default: global scope) |
@@ -157,8 +176,12 @@ A silent profile (all three lists omitted or empty) emits no allow list to the h
 | `aipack clean --cache --yes` | Remove git clone cache (frees disk, next install re-downloads) |
 | `aipack render` | Render pack content to standalone output directory |
 | `aipack pack create <name>` | Scaffold a new pack directory with pack.json |
-| `aipack pack install <name-or-url>` | Install a pack from registry, URL, or local path |
+| `aipack pack import <file-or-url> --type skill|rule|prompt` | Create a pack from one markdown file |
+| `aipack pack inspect <source>` | Preview local, registry, git, or archive pack content |
+| `aipack pack install <name-or-url>` | Install a pack from registry, URL, archive, or local path |
+| `aipack pack update --dry-run` | Preview update mutations without writing |
 | `aipack pack update --all` | Update all installed packs from their origins |
+| `aipack pack delete <name> --keep-rendered` | Stop tracking a pack while leaving rendered files unmanaged |
 
 ### Scope and targeting
 
@@ -203,6 +226,7 @@ Each harness writes content to different locations:
 | Workflows | `.claude/commands/` | `.opencode/commands/` | `.agents/skills/` | `.clinerules/workflows/` |
 | MCP | `.mcp.json` | `opencode.json` | `config.toml` | Global VS Code storage |
 | Settings | `settings.local.json` | `opencode.json` | `config.toml` | N/A |
+| Plugins | `.claude/settings.json`, `~/.claude/plugins/known_marketplaces.json` | N/A | `config.toml` | N/A |
 
 Global scope prefixes with `~/` (e.g., `~/.claude/rules/`). Project scope writes to the project directory.
 
@@ -223,6 +247,7 @@ Content vectors are auto-discovered from standard directories. Explicit arrays a
 {
   "rules": ["rule-one", "rule-two"],
   "skills": ["deploy"],
+  "plugins": ["linear"],
   "profiles": ["dev", "lean"],
   "registries": ["team-tools"],
   "extras": ["scripts/run-server.sh", "data"],
@@ -231,7 +256,7 @@ Content vectors are auto-discovered from standard directories. Explicit arrays a
 }
 ```
 
-All content fields use bare IDs (e.g., `"profiles": ["dev"]` corresponds to `profiles/dev.yaml`). Extras are the exception — they use relative paths because they can reference files outside standard directories.
+All content fields use bare IDs (e.g., `"profiles": ["dev"]` corresponds to `profiles/dev.yaml`; `"plugins": ["linear"]` corresponds to `plugins/linear.json`). Extras are the exception — they use relative paths because they can reference files outside standard directories.
 
 Tool permissions are entirely a profile concern — `pack.json` lists server IDs only. Profiles own `allowed_tools` / `always_allowed_tools` / `disabled_tools` per server. A silent profile (no allow-list entries) emits no allow list, so the harness's native default applies. Packs that want opinionated defaults ship them through a bundled profile (e.g. `profiles/default.yaml`), not the manifest. Pre-v0.23 packs use `schema_version: 1` with a nested `mcp: { servers: { ... }, default_allowed_tools: [...] }` object; they still load in v0.23+ under the dedicated v1 parser, but v1's pack-level tool policy is read and discarded — use `schema_version: 2` with a bundled profile to express tool policy.
 
@@ -240,6 +265,7 @@ Tool permissions are entirely a profile concern — `pack.json` lists server IDs
 | File | Purpose |
 |------|---------|
 | `~/.config/aipack/sync-config.yaml` | Sync defaults (profile, harnesses, scope, collision strategy) and registry sources |
+| `~/.config/aipack/.env` | Local `{env:*}` values; loaded before process environment |
 | `~/.config/aipack/aipack.lock` | Installed pack inventory: origin, method, ref, commit hash, version pin, drift baseline |
 | `~/.config/aipack/profiles/<name>.yaml` | Profile: which packs/content to sync |
 | `~/.config/aipack/packs/<name>/pack.json` | Pack manifest |
@@ -254,15 +280,22 @@ Pack state lives in `aipack.lock`, not `sync-config.yaml`. To answer *which pack
 | Command | Purpose |
 |---------|---------|
 | `aipack registry fetch` | Fetch and cache remote registry sources |
+| `aipack registry fetch --deep` | Index registered pack resources for search before install |
+| `aipack registry validate <file>` | Validate registry YAML |
+| `aipack pack inspect <source>` | Preview pack content and MCP warnings without install |
+| `aipack pack import <file-or-url> --type skill|rule|prompt --name <pack>` | Import one markdown resource as a pack |
 | `aipack pack install` | Reconcile active profile — install any packs the profile references but disk doesn't have |
 | `aipack pack install <name>` | Install pack by registry name |
 | `aipack pack install <name>@<version>` | Install a specific semver tag and pin to it |
 | `aipack pack install --url <url>` | Install from a git URL |
+| `aipack pack install --url <archive-url> --archive` | Install from a static zip/tar archive |
 | `aipack pack install <path>` | Install from a local directory (symlink by default) |
+| `aipack pack update --dry-run` | Preview update outcomes without mutating disk or lockfile |
 | `aipack pack update` | Update all installed packs (parallel, bounded) |
 | `aipack pack update <name>` | Update one pack to the latest matching its pin |
 | `aipack pack versions <name>` | List available semver versions for an installed or registered pack |
-| `aipack pack delete <name>` | Remove installed pack |
+| `aipack pack delete <name>` | Delete an installed pack and attributed rendered output |
+| `aipack pack delete <name> --keep-rendered` | Remove tracking but leave rendered files unmanaged |
 | `aipack pack add <name>` | Add an installed pack to the active profile |
 | `aipack pack remove <name>` | Remove a pack from the active profile |
 
@@ -289,7 +322,7 @@ For multi-pack monorepos: once a pack is installed at a namespaced tag (`my-pack
 
 ### Profile params after install
 
-When switching to a new profile, carry over `params` from any previous profile — otherwise MCP servers with `{params.*}` references will be skipped with unresolved param warnings.
+When switching to a new profile, run `aipack setup <profile>` or `aipack profile refs <profile>` before sync. Carry over stable `params` from previous profiles with `profile set-param`; put machine-local values in `.env` with `aipack config env set`. Bare `{params.*}` refs and missing `{env:*}` refs skip MCP servers or fail settings expansion.
 
 ### Content collisions
 
