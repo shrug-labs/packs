@@ -3,7 +3,7 @@ name: aipack-system
 description: Use when syncing, configuring, troubleshooting, or managing aipack packs — including sync-config, profiles, harness behaviors, and the delivery pipeline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-05-06
+  last_updated: 2026-05-11
 ---
 
 # aipack System Reference
@@ -26,10 +26,11 @@ This is a specific case of the generated-vs-authored principle: edit the input, 
 Every time you modify pack content:
 
 1. **Edit** content in pack source (`~/.config/aipack/packs/<pack>/`)
-2. **Verify sync defaults:** `cat ~/.config/aipack/sync-config.yaml`
+2. **Verify sync defaults:** `aipack config defaults get`
    - Check `defaults.profile` — which profile will be used?
    - Check `defaults.harnesses` — which harnesses will be synced?
    - Check `defaults.scope` — global (default) or project?
+   - Check `defaults.auto_sync` — will pack/profile mutations trigger a sync?
 3. **Verify active profile:** `cat ~/.config/aipack/profiles/<profile>.yaml`
    - Which packs are enabled? (`enabled: true/false/null`)
    - Which content is included/excluded per vector?
@@ -161,6 +162,7 @@ A silent profile (all three lists omitted or empty) emits no allow list to the h
 | `aipack sync --scope project` | Apply to current project directory |
 | `aipack sync --force --yes` | Overwrite all managed files, even conflicts |
 | `aipack doctor` | Validate pack structure and config |
+| `aipack config defaults get|set <key> <value>` | Manage sync-config defaults: profile, harnesses, scope, collision_strategy, auto_sync |
 | `aipack config env list|get|set|unset|path|edit` | Manage config-local `.env` values for `{env:*}` |
 | `aipack profile refs` | Check profile params/env refs |
 | `aipack profile set-param <profile> <key> <value>` | Set a profile param |
@@ -264,7 +266,7 @@ Tool permissions are entirely a profile concern — `pack.json` lists server IDs
 
 | File | Purpose |
 |------|---------|
-| `~/.config/aipack/sync-config.yaml` | Sync defaults (profile, harnesses, scope, collision strategy) and registry sources |
+| `~/.config/aipack/sync-config.yaml` | Sync defaults (profile, harnesses, scope, collision strategy, auto_sync) and registry sources |
 | `~/.config/aipack/.env` | Local `{env:*}` values; loaded before process environment |
 | `~/.config/aipack/aipack.lock` | Installed pack inventory: origin, method, ref, commit hash, version pin, drift baseline |
 | `~/.config/aipack/profiles/<name>.yaml` | Profile: which packs/content to sync |
@@ -288,7 +290,8 @@ Pack state lives in `aipack.lock`, not `sync-config.yaml`. To answer *which pack
 | `aipack pack install <name>` | Install pack by registry name |
 | `aipack pack install <name>@<version>` | Install a specific semver tag and pin to it |
 | `aipack pack install --url <url>` | Install from a git URL |
-| `aipack pack install --url <archive-url> --archive` | Install from a static zip/tar archive |
+| `aipack pack install <archive-url>` | Install from a static zip/tar archive |
+| `aipack pack install <archive-file>` | Install from a local static zip/tar archive |
 | `aipack pack install <path>` | Install from a local directory (symlink by default) |
 | `aipack pack update --dry-run` | Preview update outcomes without mutating disk or lockfile |
 | `aipack pack update` | Update all installed packs (parallel, bounded) |
