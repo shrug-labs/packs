@@ -167,6 +167,7 @@ A silent profile (all three lists omitted or empty) emits no allow list to the h
 | `aipack profile refs` | Check profile params/env refs |
 | `aipack profile set-param <profile> <key> <value>` | Set a profile param |
 | `aipack profile unset-param <profile> <key>` | Remove a profile param |
+| `aipack search <terms> --json` | Non-interactive index search for agents and automation; avoids opening the TUI on a TTY |
 | `aipack search --status installed\|registered\|inspected` | Filter discovery results by pack status |
 | `aipack search --kind rule\|skill\|workflow\|agent\|prompt\|mcp\|plugin` | Filter discovery by content kind |
 | `aipack trace <name>` | Resolve an active-profile resource by name (no resource type required when unambiguous) |
