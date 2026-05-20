@@ -3,7 +3,7 @@ name: pack-content-craft
 description: Use when creating, editing, or reviewing any pack content (rules, skills, workflows, agents) to ensure it actually changes agent behavior
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-11
+  last_updated: 2026-05-19
 ---
 
 # Pack Content Craft
@@ -24,9 +24,20 @@ If you haven't watched an agent fail without this content, you don't know if the
 - Not for content that "seems useful"
 - If you haven't seen the failure, you haven't earned the content
 
-## Three Behavioral Tests
+## Instruction Surface
 
-Every piece of pack content must pass all three before it ships.
+Pack content is the instruction surface, not documentation about the instruction.
+
+- Write trigger-action-verification directives.
+- Use succinct bullets, numbered steps, decision tables, exact commands, and hard gates.
+- Keep context only when it changes an agent decision, action, verification, refusal, or escalation.
+- Delete backstory, apology, rationale paragraphs, incident narrative, author intent, explanatory padding, and meta-commentary.
+- Move useful history or rationale to memory, design docs, changelogs, or human-facing docs.
+- Keep examples only when they disambiguate an observed failure.
+
+## Four Behavioral Tests
+
+Every piece of pack content must pass all four before it ships.
 
 ### 1. Removal Test
 
@@ -45,6 +56,12 @@ Does the content contain concrete actions, exact commands, or decision trees?
 What excuses will the model generate to skip this guidance?
 - **Excuses explicitly countered** → Content is hardened.
 - **Excuses not addressed** → Model WILL find a way around it. Add counters.
+
+### 4. Line-Retention Test
+
+Does this line directly change what the agent does, chooses, verifies, refuses, or asks?
+- **Yes** → Keep it.
+- **No** → Delete it or move it to human-facing docs/memory.
 
 ## Which Construct?
 
@@ -129,7 +146,7 @@ How to write skill descriptions that trigger correctly.
 
 ```yaml
 # BAD: Summarizes workflow — agent shortcuts the body
-description: Use for writing pack content — choose construct, apply three tests, TDD loop
+description: Use for writing pack content — choose construct, apply four tests, TDD loop
 
 # GOOD: Triggering conditions only — agent must read body for methodology
 description: Use when creating, editing, or reviewing any pack content (rules, skills, workflows, agents) to ensure it actually changes agent behavior
@@ -147,8 +164,9 @@ description: Use when creating, editing, or reviewing any pack content (rules, s
 | "Consider/be careful about X" | Vague guidance = theater. What SPECIFIC action should the agent take? |
 | "Or equivalent" | Agent doesn't know what's equivalent. Decision tree or exact specification. |
 | "This prevents future problems" | Content addresses OBSERVED failures, not hypothetical ones. |
+| "The rationale helps adoption" | Human-facing docs can explain rationale. Pack content must direct agent behavior. |
 
-**All of these mean: Apply the three behavioral tests. If it fails any, rewrite or delete.**
+**All of these mean: Apply the four behavioral tests. If it fails any, rewrite or delete.**
 
 ## References
 

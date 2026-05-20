@@ -7,6 +7,7 @@ Prescriptive standard for authoring pack content (rules, skills, workflows, agen
 All pack artifacts must be:
 
 - **Actionable**: operators can follow steps without guessing.
+- **Directive**: each line changes an agent decision, action, verification, refusal, or escalation.
 - **Verifiable**: success criteria are explicit and machine-checkable when possible.
 - **Safe by default**: least privilege, no secrets, no accidental mutation.
 - **Portable**: no absolute paths; no user/machine assumptions.
@@ -15,9 +16,13 @@ All pack artifacts must be:
 
 Write in consumer-facing, prescriptive language.
 
+- Treat pack content as the instruction surface, not documentation about the instruction.
+- Write trigger-action-verification directives.
 - Use imperative verbs for steps.
 - State obligations with "must / must not".
 - Put constraints and required outputs before the steps.
+- Keep context only when it changes an agent decision, action, verification, refusal, or escalation.
+- Delete backstory, apology, rationale paragraphs, incident narrative, author intent, explanatory padding, and meta-commentary.
 - Never write meta-breaking prose ("as an AI/agent...", "I will...", "here is my thought process...").
 - Never use contrived scenario framing ("you might have...", "imagine you...", "say you have..."). State what the thing is, state what it does, use real code examples to illustrate. If a concept needs a use case, put it in a dedicated example section — not woven into the opener as narrative scaffolding.
 
@@ -26,6 +31,10 @@ Examples:
 - "You must run validation and fix all findings before pushing."
 - "Do not paste tokens, keys, or credential material. Use `{env:VAR}` placeholders."
 - "If a step mutates state, require an explicit confirmation step before it."
+
+Line-retention test:
+- Keep a line only if removing it would change what the agent does, chooses, verifies, refuses, or asks.
+- Move useful rationale/history to memory, design docs, changelogs, or human-facing docs.
 
 ## Non-negotiables
 
