@@ -3,7 +3,7 @@ name: aipack-system
 description: Use when syncing, configuring, troubleshooting, or managing aipack packs — including sync-config, profiles, harness behaviors, and the delivery pipeline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-05-22
+  last_updated: 2026-06-10
 ---
 
 # aipack System Reference
@@ -150,7 +150,7 @@ A silent profile (all three lists omitted or empty) emits no allow list to the h
 - Use `{params.KEY}` for required profile params and `{params.KEY:-default}` for literal defaults.
 - Use `{env:KEY}` for machine-local or secret values. aipack reads `~/.config/aipack/.env` first, then the process environment.
 - Check required values with `aipack profile refs` or the shorter `aipack setup`.
-- Set stable params with `aipack profile set-param <profile> <key> <value>`.
+- Set stable params with `aipack config params set <key> <value> --profile <profile>`.
 - Set local env values with `aipack config env set KEY VALUE`; inspect the file path with `aipack config env path`.
 
 ## Common Commands
@@ -165,9 +165,10 @@ A silent profile (all three lists omitted or empty) emits no allow list to the h
 | `aipack doctor` | Validate pack structure and config |
 | `aipack config defaults get|set <key> <value>` | Manage sync-config defaults: profile, harnesses, scope, collision_strategy, auto_sync, namespaced |
 | `aipack config env list|get|set|unset|path|edit` | Manage config-local `.env` values for `{env:*}` |
+| `aipack config params list|get|set|unset [--profile <name>]` | Manage profile params for `{params.*}`; default profile comes from sync-config |
 | `aipack profile refs` | Check profile params/env refs |
-| `aipack profile set-param <profile> <key> <value>` | Set a profile param |
-| `aipack profile unset-param <profile> <key>` | Remove a profile param |
+| `aipack profile set-param <profile> <key> <value>` | Compatibility alias for setting a profile param |
+| `aipack profile unset-param <profile> <key>` | Compatibility alias for removing a profile param |
 | `aipack search <terms> --json` | Non-interactive index search for agents and automation; avoids opening the TUI on a TTY |
 | `aipack search --status installed\|registered\|inspected` | Filter discovery results by pack status |
 | `aipack search --kind rule\|skill\|workflow\|agent\|prompt\|mcp\|plugin` | Filter discovery by content kind |
@@ -225,9 +226,10 @@ Each harness writes content to different locations:
 | Vector | Claude Code | OpenCode | Codex | Cline |
 |--------|-------------|----------|-------|-------|
 | Rules | `.claude/rules/` | `.opencode/rules/` | `AGENTS.override.md` | `.clinerules/` |
-| Skills | `.claude/skills/` | `.opencode/skills/` | `.agents/skills/` | `.agents/skills/` |
-| Agents | `.claude/agents/` | `.opencode/agents/` | Native TOML | `.agents/skills/` |
-| Workflows | `.claude/commands/` | `.opencode/commands/` | `.agents/skills/` | `.clinerules/workflows/` |
+| Skills | `.claude/skills/` | `.opencode/skills/` | `.codex/skills/` | `.agents/skills/` |
+| Agents | `.claude/agents/` | `.opencode/agents/` | `.codex/agents/` native TOML | `.agents/skills/` |
+| Workflows | `.claude/commands/` | `.opencode/commands/` | `.codex/skills/` | `.clinerules/workflows/` |
+| Hooks | `settings.local.json` | `plugins/aipack-hooks.js` | `.codex/hooks.json` | `.clinerules/hooks/` |
 | MCP | `.mcp.json` | `opencode.json` | `config.toml` | Global VS Code storage |
 | Settings | `settings.local.json` | `opencode.json` | `config.toml` | N/A |
 | Plugins | `.claude/settings.json`, `~/.claude/plugins/known_marketplaces.json` | N/A | `config.toml` | N/A |
@@ -262,7 +264,7 @@ Content vectors are auto-discovered from standard directories. Explicit arrays a
 
 All content fields use bare IDs (e.g., `"profiles": ["dev"]` corresponds to `profiles/dev.yaml`; `"plugins": ["linear"]` corresponds to `plugins/linear.json`). Extras are the exception — they use relative paths because they can reference files outside standard directories.
 
-Tool permissions are entirely a profile concern — `pack.json` lists server IDs only. Profiles own `allowed_tools` / `always_allowed_tools` / `disabled_tools` per server. A silent profile (no allow-list entries) emits no allow list, so the harness's native default applies. Packs that want opinionated defaults ship them through a bundled profile (e.g. `profiles/default.yaml`), not the manifest. Pre-v0.23 packs use `schema_version: 1` with a nested `mcp: { servers: { ... }, default_allowed_tools: [...] }` object; they still load in v0.23+ under the dedicated v1 parser, but v1's pack-level tool policy is read and discarded — use `schema_version: 2` with a bundled profile to express tool policy.
+Tool permissions are entirely a profile concern — `pack.json` lists server IDs only. Profiles own `allowed_tools` / `always_allowed_tools` / `disabled_tools` per server. A silent profile (no allow-list entries) emits no allow list, so the harness's native default applies. Packs that want opinionated defaults ship them through a named bundled profile such as `profiles/team.yaml`, not the manifest. Do not use `profiles/default.yaml`; `default` is reserved for the user's local default profile and is rejected by `pack validate`. Pre-v0.23 packs use `schema_version: 1` with a nested `mcp: { servers: { ... }, default_allowed_tools: [...] }` object; they still load in v0.23+ under the dedicated v1 parser, but v1's pack-level tool policy is read and discarded — use `schema_version: 2` with a bundled profile to express tool policy.
 
 ## Configuration Locations
 
@@ -327,7 +329,7 @@ For multi-pack monorepos: once a pack is installed at a namespaced tag (`my-pack
 
 ### Profile params after install
 
-When switching to a new profile, run `aipack setup <profile>` or `aipack profile refs <profile>` before sync. Carry over stable `params` from previous profiles with `profile set-param`; put machine-local values in `.env` with `aipack config env set`. Bare `{params.*}` refs and missing `{env:*}` refs skip MCP servers or fail settings expansion.
+When switching to a new profile, run `aipack setup <profile>` or `aipack profile refs <profile>` before sync. Carry over stable `params` from previous profiles with `aipack config params set <key> <value> --profile <profile>`; put machine-local values in `.env` with `aipack config env set`. Bare `{params.*}` refs and missing `{env:*}` refs skip MCP servers or fail settings expansion.
 
 ### Content collisions
 

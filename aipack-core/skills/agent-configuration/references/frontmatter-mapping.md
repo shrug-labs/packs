@@ -50,7 +50,7 @@ All 4 harnesses use the Agent Skills standard. `name` + `description` are the on
 
 Additional standard fields (`license`, `compatibility`) are accepted but have no runtime effect in any harness.
 
-Destination: `.claude/skills/<name>/SKILL.md` | `.opencode/skills/<name>/SKILL.md` | `.agents/skills/<name>/SKILL.md` | `.clinerules/skills/<name>/SKILL.md`
+Destination: `.claude/skills/<name>/SKILL.md` | `.opencode/skills/<name>/SKILL.md` | `.codex/skills/<name>/SKILL.md` | `.agents/skills/<name>/SKILL.md`
 
 ### Agents
 
@@ -63,7 +63,7 @@ Destination: `.claude/skills/<name>/SKILL.md` | `.opencode/skills/<name>/SKILL.m
 | `disallowed_tools` | `disallowedTools:` (camelCase, comma string) | mapped to `permission` deny rules | TOML array | N/A |
 | `metadata` | stripped | stripped | stripped | N/A |
 
-Destination: `.claude/agents/*.md` | `.opencode/agents/*.md` | `.agents/*.toml` (converted from markdown) | N/A
+Destination: `.claude/agents/*.md` | `.opencode/agents/*.md` | `.codex/agents/*.toml` (converted from markdown) | N/A
 
 Cline has no agent construct. Codex agents are TOML files — aipack converts markdown agent definitions to `.toml` format at sync time.
 
@@ -101,7 +101,7 @@ CC commands also support: `argument-hint`, `disable-model-invocation`, `user-inv
 |---|---|
 | Claude Code | snake_case → camelCase, tools list → comma string, PascalCase tool names |
 | OpenCode | tools list → bool map (deprecated path), preserves snake_case |
-| Codex | Rules flattened into `AGENTS.override.md`, agents converted to `.agents/*.toml`, MCP into `config.toml` TOML tables |
+| Codex | Rules flattened into `AGENTS.override.md`, agents converted to `.codex/agents/*.toml`, MCP into `config.toml` TOML tables |
 | Cline | harness-neutral format, MCP into `cline_mcp_settings.json` |
 
 ## What `metadata` contains

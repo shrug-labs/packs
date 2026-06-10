@@ -22,8 +22,8 @@ All three variants (CLI, Desktop App, IDE extension) share `~/.codex/config.toml
 
 ## Skills
 
-- Project: `.agents/skills/<name>/SKILL.md`
-- Global: `~/.agents/skills/<name>/SKILL.md`
+- Project: `.codex/skills/<name>/SKILL.md`
+- Global: `~/.codex/skills/<name>/SKILL.md` by default, or `$CODEX_HOME/skills/<name>/SKILL.md` when `CODEX_HOME` is set
 - Progressive disclosure: only name + description loaded at startup, full SKILL.md on demand
 - Implicit invocation — model auto-selects based on description match
 
@@ -37,7 +37,7 @@ Configured in `config.toml` under `[mcp_servers.<name>]` tables:
 
 ## Agents
 
-- Defined as TOML files: `.agents/*.toml` (project), `~/.agents/*.toml` (global)
+- Defined as TOML files: `.codex/agents/*.toml` (project), `~/.codex/agents/*.toml` (global), or `$CODEX_HOME/agents/*.toml` when `CODEX_HOME` is set
 - Also configurable via `[agents.<name>]` tables in `config.toml`
 - Subagents: behind `multi_agent` feature flag. Primary agent can spawn subagents for parallel or delegated work.
 - aipack converts pack agent definitions (markdown) to Codex TOML format at sync time

@@ -7,12 +7,12 @@ Reference for how each harness supports pack capability vectors. Consult before 
 | Vector | Claude Code | OpenCode | Codex | Cline |
 |--------|-------------|----------|-------|-------|
 | Rules | `.claude/rules/` individual files (frontmatter preserved) | `.opencode/rules/` individual files | `AGENTS.override.md` (flattened) | `.clinerules/` individual files |
-| Agents | `.claude/agents/*.md` (frontmatter transformed) | `.opencode/agents/*.md` | `.agents/*.toml` (converted from markdown) | N/A |
+| Agents | `.claude/agents/*.md` (frontmatter transformed) | `.opencode/agents/*.md` | `.codex/agents/*.toml` (converted from markdown) | N/A |
 | Workflows | `.claude/commands/*.md` | `.opencode/commands/*.md` | Promoted to skills during sync | `.clinerules/workflows/*.md` |
-| Skills | `.claude/skills/<name>/` | `.opencode/skills/<name>/` + JSON `skills.paths` | `.agents/skills/<name>/` | `.clinerules/skills/<name>/`, `.cline/skills/`, `.claude/skills/` |
+| Skills | `.claude/skills/<name>/` | `.opencode/skills/<name>/` + JSON `skills.paths` | `.codex/skills/<name>/` | `.agents/skills/<name>/` |
 | MCP | `.mcp.json` (project), `~/.claude.json` (global) | `opencode.json` (JSON) | `config.toml` (`[mcp_servers]` TOML table) | `cline_mcp_settings.json` (**global only**) |
 | Settings | `settings.local.json` (template + merge) | `opencode.json` (template + merge) | `config.toml` (template + merge) | **Not supported** |
-| Hooks | `settings.json` hooks (25+ events, command/http/prompt/agent) | N/A | `hooks.json` (experimental, 5 events, command) | `.clinerules/hooks/` (8 events, script) |
+| Hooks | `settings.json` hooks (25+ events, command/http/prompt/agent) | Generated `plugins/aipack-hooks.js` server plugin | `hooks.json` (experimental, 5 events, command) | `.clinerules/hooks/` (8 events, script) |
 | Plugins | `.mcp.json` (always generated) | `oh-my-opencode.json` (pure copy) | MCP-only via MergeMode | `cline_mcp_settings.json` (always generated) |
 
 ## Agent Frontmatter Transformation

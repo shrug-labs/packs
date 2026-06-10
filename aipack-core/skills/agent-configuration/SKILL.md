@@ -3,7 +3,7 @@ name: agent-configuration
 description: Use when understanding, adding, changing, or troubleshooting agent harness configuration (rules/skills/commands/tools/permissions) across Claude Code, OpenCode, Codex, or Cline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-04-01
+  last_updated: 2026-06-10
 ---
 
 ## Why this exists
@@ -31,7 +31,7 @@ Run these checks after any harness or pack change, and whenever behavior is surp
 | Check | Claude Code | OpenCode | Codex | Cline |
 |-------|-------------|----------|-------|-------|
 | Config/paths | Inspect `~/.claude/rules/`, `~/.claude/skills/`, `.mcp.json` | `opencode debug paths` | Inspect `AGENTS.override.md`, `config.toml` | Check `.clinerules/`, MCP settings UI |
-| Agent/tools | Review `.claude/agents/`, `settings.json` permissions | `opencode debug agent <name>` | Inspect `.agents/*.toml`, `config.toml` | MCP settings UI → server tool lists |
+| Agent/tools | Review `.claude/agents/`, `settings.json` permissions | `opencode debug agent <name>` | Inspect `.codex/agents/*.toml`, `config.toml` | MCP settings UI → server tool lists |
 | MCP config | `cat .mcp.json` or `~/.claude.json` | `opencode debug paths` + `opencode debug agent <name>` | Inspect `config.toml` `[mcp_servers]` | MCP settings in GUI |
 
 1) Confirm config/rules/skills locations match your expectation for the current repo and environment.
@@ -109,4 +109,3 @@ Codex: https://developers.openai.com/codex/config-reference/
 Cline: https://docs.cline.bot/
 
 Per-harness reference files in `references/` carry full doc link sets.
-
