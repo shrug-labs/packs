@@ -25,6 +25,9 @@ metadata:
    - Budget violations (OVER) — rules >60 lines, SKILL.md >500 lines
    - Missing frontmatter fields (MISS/NONE)
    - CSO trigger failures on skill descriptions
+
+   Then run `scripts/pack-audit.sh --aggregate <synced-rules-dir> [<synced-skills-dir>]` against the rendered harness output (e.g. `~/.claude/rules`, `~/.claude/skills`) for the cross-profile always-on budget the per-file checks cannot see: rule count, rule tokens, and skill-description payload.
+
    Note findings. These are mechanical checks — the semantic review comes in later steps.
 
 3. **Identify ecosystem**
@@ -36,7 +39,7 @@ metadata:
    Use pack-content-craft skill, specifically references/review-guide.md Level 1 criteria.
    - Check for rule overlap across packs
    - Check for skill description overlap (ambiguous triggers)
-   - Calculate total always-on token budget across all loaded packs
+   - Review the aggregate always-on budget from Step 2 (rule count, tokens, skill-description payload) against review-guide.md Level 1 criteria
    - Flag dependencies and conflicts
 
    Report findings before proceeding.

@@ -50,6 +50,11 @@ type: project | reference | strategy | feedback | user
 metadata:
   created: 2026-04-04T14:30-08:00
   last_updated: 2026-04-04T16:45-08:00
+  created_session: claude-code:fd8a0309-729b-4588-afa0-2ccd9b105e80
+  updated_sessions:
+    - claude-code:fd8a0309-729b-4588-afa0-2ccd9b105e80
+    - claude-code:b815b06f-ff32-4aa7-9b0c-fd0ee40a49b5
+    - codex:019ef1ea-32b5-76d0-a99f-example0000
 ---
 ```
 
@@ -59,10 +64,35 @@ Fields:
 - `type`: determines retention policy and retrieval priority
 - `metadata.created`: ISO 8601 datetime with timezone offset when the file was first written
 - `metadata.last_updated`: ISO 8601 datetime with timezone offset of most recent substantive change
+- `metadata.created_session`: harness-qualified session ID of the session that first wrote the file. Format: `<harness>:<id>`.
+- `metadata.updated_sessions`: ordered, deduped list of every session that has written to the file. The first entry always equals `created_session`.
 
 Datetime format is `YYYY-MM-DDTHH:MM±HH:MM` — always include explicit timezone offset (e.g. `-08:00` for PST, or `Z` for UTC).
 
 Body content follows the frontmatter. Use inline status labels where applicable: `**Status:** Phase 2 complete (2026-03-09)`.
+
+### Session attribution
+
+Every memory-bank write records which session did it. The compound key `<harness>:<id>` uses the same harness slug aipack uses for sync targets (`claude-code`, `codex`, `opencode`, `cline`).
+
+On every write:
+
+1. If the file is new, set `metadata.created_session` to the current session and add the same value as the first (and only) entry in `metadata.updated_sessions`.
+2. If the file exists, append the current session to `metadata.updated_sessions` if it is not already present. A session that writes multiple times to the same file still appears once — `updated_sessions` is a set ordered by first-write time, not an event log.
+
+Session key resolution:
+- Codex: use `codex:${CODEX_THREAD_ID}` when `CODEX_THREAD_ID` is set.
+- Other harnesses: use the harness-documented session ID only. Do not derive a key from the date, cwd, PID, or an `unknown` placeholder.
+- If no real current session key is available, stop before writing and ask for the key or permission to omit session attribution.
+
+### Per-entry attribution for append-style files
+
+Two memory-bank files accumulate entries from many sessions. For them, per-entry attribution carries more signal than file-level:
+
+- `pack-candidates.md` — each entry has an `**Evidence:**` line. Add `**Source:** <harness>:<id>` immediately after Evidence. Required for new entries; legacy entries grandfathered.
+- `reference/session-wins.md` — the table already has a `harness` column. Add a `session` column to its right containing the compound key. Required for new rows.
+
+File-level `metadata.created_session` and `metadata.updated_sessions` still apply (the file itself was created and updated by sessions), but the per-entry fields are where the meaningful provenance lives for these two.
 
 Additional conventions:
 - Descriptive slugs for filenames: `aipack-core-migration.md`, not `migration.md`

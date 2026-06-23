@@ -48,6 +48,7 @@ Harness auto-captures land in `~/.config/aipack/memory-bank/inbox/`. During know
 - All files require YAML frontmatter (see memory-bank skill for schema).
 - Read existing memory-bank files before creating new ones.
 - Update on significant learning — do not wait for session end.
+- Every write records the real current session key in metadata; never invent date-based or `unknown` IDs. If no real key is available, stop before writing and ask. See memory-bank skill.
 - One SSOT per piece of knowledge. If it exists in a pack, do not duplicate in memory-bank.
 - Deleting memory-bank files requires user confirmation.
 - When removing active memory, prefer archiving over deletion. See memory-bank skill for archive conventions and the archive-vs-delete decision tree.

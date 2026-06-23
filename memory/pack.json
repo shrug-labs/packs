@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "name": "memory",
-  "version": "2026.03.23",
+  "version": "2026.06.23",
   "description": "Persistent memory system — knowledge routing, session capture, auditing, and lifecycle management across sessions.",
   "root": ".",
   "rules": [

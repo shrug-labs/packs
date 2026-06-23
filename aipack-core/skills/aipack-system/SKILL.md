@@ -172,7 +172,7 @@ A silent profile (all three lists omitted or empty) emits no allow list to the h
 | `aipack search <terms> --json` | Non-interactive index search for agents and automation; avoids opening the TUI on a TTY |
 | `aipack search --status installed\|registered\|inspected` | Filter discovery results by pack status |
 | `aipack search --kind rule\|skill\|workflow\|agent\|prompt\|mcp\|plugin` | Filter discovery by content kind |
-| `aipack trace <name>` | Resolve an active-profile resource by name (no resource type required when unambiguous) |
+| `aipack trace <name>` | Resolve a resource by name; falls back to inactive profile/install diagnostics when active content is missing |
 | `aipack save` | Reverse: save harness content back to pack source |
 | `aipack clean --dry-run` | Preview what clean would remove |
 | `aipack clean --yes` | Remove managed files (default: global scope) |

@@ -16,10 +16,14 @@ How does this pack layer with others? Review with all loaded packs visible.
 - Does this pack conflict with another pack's rules? (e.g., one says "always X", another says "never X")
 - Is the pack's scope clearly distinct from other packs? State the one-sentence scope and verify no other pack claims the same scope.
 
-**Token budget across ecosystem:**
-- Sum all always-on rules across all loaded packs. Total should be <20K tokens.
-- If over budget: which rules fail the removal test? Cut those first.
-- Skills and workflows are cheap (description-only until triggered) — no cross-pack budget concern.
+**Aggregate always-on budget:**
+
+The per-item removal test does not bound the whole — a profile where every rule passes individually can still carry too much always-on content. Run `scripts/pack-audit.sh --aggregate <synced-rules-dir> [<synced-skills-dir>]` against the rendered harness location (e.g. `~/.claude/rules/`, `~/.claude/skills/` — count the synced copies, not pack source), and check three aggregates across all enabled packs:
+- **Rule count** — instruction-following decays with the *number* of simultaneous directives, not just their token sum. A profile under the token ceiling can still hold too many competing rules.
+- **Rule tokens** — ceiling <20K tokens.
+- **Skill-description payload** — every enabled skill's description is always-on (injected for triggering); only the body is deferred. "Skills are free" is true of bodies, not descriptions — dozens of skills cost real always-on tokens.
+
+Over any aggregate: rank rules/skills by token cost, apply the pack-content-craft removal test to the largest entries, and cut what no longer moves behavior.
 
 ---
 
@@ -63,6 +67,12 @@ For every rule, skill, workflow, and agent:
 3. **Rationalization Test:** What excuses would the agent use to skip this?
    - If the content is discipline-enforcing: does it have rationalization tables, red flags, iron laws?
    - If not: it will be rationalized away under pressure.
+
+### Observable Evidence
+
+- For file-edit claims, inspect the diff; do not grade from the agent's summary.
+- For process claims, require observable action in transcript, command history, or tool output.
+- Do not add audit/provenance state to loaded rule or skill frontmatter.
 
 ### Per-Construct Checks
 

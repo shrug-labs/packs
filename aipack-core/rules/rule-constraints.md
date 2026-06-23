@@ -38,6 +38,7 @@ Every edit to a rule must leave frontmatter conformant. No "I'll add metadata la
 - 60 lines max. No exceptions.
 - Over 60 lines → split: concise rule (seed) + detailed skill (methodology).
 - Every line must change agent behavior. Remove lines that restate model defaults.
+- Budget is per-rule AND aggregate: a profile's total always-on rule count + tokens are bounded too (see pack-content-craft review-guide.md; `pack-audit.sh --aggregate`).
 
 ## Voice
 

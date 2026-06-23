@@ -15,7 +15,8 @@ Tier model, admission criteria, and demotion triggers for pack resources. Loaded
 - Cap default-loaded (Tier A) resources to **2-4 per vector** (rules, skills, workflows, agents, MCP).
 - **Meta-pack exception:** packs whose rules govern other packs' content (e.g., aipack-core) may exceed the cap when each rule is structurally mandatory. Rules exceeding the cap must use `paths`-based conditional loading where harness-supported.
 - Additional resources remain opt-in (Tier B/C) only.
-- Tier A requires: owner, use-case mapping, success metric, evidence, rollback condition, last-reviewed date. Missing any → keep out of Tier A.
+- Tier A requires: owner, use-case mapping, success metric, review evidence, rollback condition, and last-reviewed date. Missing any → keep out of Tier A.
+- Do not add audit, provenance, or eval state to loaded frontmatter. Track review state outside prompt-loaded content.
 
 ## Demotion
 
