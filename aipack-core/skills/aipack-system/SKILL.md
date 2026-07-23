@@ -3,7 +3,7 @@ name: aipack-system
 description: Use when syncing, configuring, troubleshooting, or managing aipack packs — including sync-config, profiles, harness behaviors, and the delivery pipeline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-06-10
+  last_updated: 2026-07-23
 ---
 
 # aipack System Reference
@@ -185,6 +185,7 @@ A silent profile (all three lists omitted or empty) emits no allow list to the h
 | `aipack pack inspect <source>` | Preview local, registry, git, or archive pack content |
 | `aipack pack install <name-or-url>` | Install a pack from registry, URL, archive, or local path |
 | `aipack pack update --dry-run` | Preview update mutations without writing |
+| `aipack pack update --all --dry-run --json` | Emit versioned check output without changing installed or configured state; archive observations may refresh |
 | `aipack pack update --all` | Update all installed packs from their origins |
 | `aipack pack delete <name> --keep-rendered` | Stop tracking a pack while leaving rendered files unmanaged |
 
@@ -298,6 +299,7 @@ Pack state lives in `aipack.lock`, not `sync-config.yaml`. To answer *which pack
 | `aipack pack install <archive-file>` | Install from a local static zip/tar archive |
 | `aipack pack install <path>` | Install from a local directory (symlink by default) |
 | `aipack pack update --dry-run` | Preview update outcomes without mutating disk or lockfile |
+| `aipack pack update --all --dry-run --json` | Emit versioned check output without changing installed or configured state; archive observations may refresh |
 | `aipack pack update` | Update all installed packs (parallel, bounded) |
 | `aipack pack update <name>` | Update one pack to the latest matching its pin |
 | `aipack pack versions <name>` | List available semver versions for an installed or registered pack |
