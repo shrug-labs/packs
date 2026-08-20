@@ -27,8 +27,8 @@ Requires [aipack](https://github.com/shrug-labs/aipack).
 
 ```bash
 # Install a pack from this repo
-aipack pack install --url https://github.com/shrug-labs/packs.git --sub-path aipack-core
-aipack pack install --url https://github.com/shrug-labs/packs.git --sub-path essentials
+aipack pack install --url https://github.com/shrug-labs/packs.git --path aipack-core
+aipack pack install --url https://github.com/shrug-labs/packs.git --path essentials
 
 # Preview changes
 aipack sync --dry-run
