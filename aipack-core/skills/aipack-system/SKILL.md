@@ -3,7 +3,7 @@ name: aipack-system
 description: Use when syncing, configuring, troubleshooting, or managing aipack packs — including sync-config, profiles, harness behaviors, and the delivery pipeline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-07-23
+  last_updated: 2026-09-15
 ---
 
 # aipack System Reference
@@ -187,6 +187,7 @@ A silent profile (all three lists omitted or empty) emits no allow list to the h
 | `aipack pack update --dry-run` | Preview update mutations without writing |
 | `aipack pack update --all --dry-run --json` | Emit versioned check output without changing installed or configured state; archive observations may refresh |
 | `aipack pack update --all` | Update all installed packs from their origins |
+| `aipack --non-interactive pack update --all` | Disable Git authentication prompts for unattended updates; ordinary terminal commands allow native Git prompts automatically |
 | `aipack pack delete <name> --keep-rendered` | Stop tracking a pack while leaving rendered files unmanaged |
 
 ### Scope and targeting
