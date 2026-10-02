@@ -3,7 +3,7 @@ name: save-session
 description: Save the current conversation to memory with a summary, key insights, artifacts, and transcript location
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-23
+  last_updated: 2026-10-01
 ---
 
 # Save Session
@@ -35,7 +35,7 @@ Not the same as session-retro. A retro extracts *behavioral learnings* (what sho
    - **Open threads:** things discussed but not resolved, questions deferred
    - **People/systems referenced:** names, pages, tickets that would help future context loading
 
-   Present the summary to the user for review before writing.
+   If active instructions grant standing memory-capture permission, retain uncertainty in the summary and proceed; otherwise present it for review before writing.
 
 3. **Choose memory location**
 
@@ -64,15 +64,19 @@ Not the same as session-retro. A retro extracts *behavioral learnings* (what sho
    - Transcript reference: enough to locate the session later. The format depends on the harness — resume command, conversation/task ID, session name. Include the project context so the reference is actionable.
    - "How to apply" section explaining when future sessions should load this context
 
-   MUTATION: Writing to memory-bank. Show the full file content. Wait for approval.
+   MUTATION: Writing to memory-bank. With standing capture permission, proceed; otherwise show the full file content and wait for approval.
 
 5. **Update MEMORY.md index**
 
    Add a pointer to the new/updated file in `~/.config/aipack/memory-bank/MEMORY.md` under the appropriate section. Keep it to one line: `[filename](relative/path) — brief description`.
 
-   MUTATION: Modifying MEMORY.md index.
+   MUTATION: Modifying MEMORY.md index. Apply the same capture permission as the memory file.
 
-6. **Optionally name the session**
+6. **Checkpoint**
+
+   MUTATION: Apply the memory-bank skill's Local checkpoints guidance to the memory file and index together. With standing commit permission, create and verify the local checkpoint; otherwise follow the active commit-approval rule.
+
+7. **Optionally name the session**
 
    If the harness supports session naming and the session doesn't have a descriptive name yet, offer to rename it so it's findable by search.
 
@@ -80,7 +84,7 @@ Not the same as session-retro. A retro extracts *behavioral learnings* (what sho
 
 - Memory file written with summary, insights, artifacts, transcript pointer, and working directory
 - MEMORY.md index updated
-- User has confirmed the summary is accurate
+- Content verified and the local checkpoint completed when authorized, or a specific pending-checkpoint blocker reported; user review completed when required
 
 ## Notes
 

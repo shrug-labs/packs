@@ -1,9 +1,9 @@
 ---
 name: memory-bank
-description: Use when working with ~/.config/aipack/memory-bank/ content — organizing, reviewing, deprecating, or deciding what belongs where versus in packs
+description: Use when creating, updating, organizing, or reviewing memory-bank content, recovering pending memory checkpoints, tracing changes across sessions, or deciding what belongs in memory versus packs
 metadata:
   owner: shrug-labs
-  last_updated: 2026-04-01
+  last_updated: 2026-10-02
 ---
 
 # Memory Bank
@@ -12,6 +12,8 @@ On-demand reference for working with the persistent memory bank at `~/.config/ai
 
 ## When to Use
 
+- Writing memory-bank content or recovering pending checkpoints
+- Tracing memory changes and work across sessions
 - Reviewing or reorganizing memory-bank content
 - Deciding whether new knowledge belongs in memory-bank or elsewhere
 - Deprecating memory-bank content that has been promoted to a pack
@@ -137,6 +139,24 @@ Things found in memory-bank that don't belong:
 ### Read Before Write
 
 Before creating a new file, search existing memory-bank files for related content. Prefer updating an existing file over creating a new one.
+
+### Local checkpoints
+
+- Apply active permission rules to memory writes and Git commits. Standing permission covers only its declared paths and operations; otherwise retain the approval gates. Draft-only requests do not authorize writes or commits.
+- Before editing, run `git -C <memory-repo> status --short` and inspect staged, unstaged, and untracked changes in the intended paths. Resolve `<memory-repo>` with `git -C <memory-bank-directory> rev-parse --show-toplevel`.
+- With standing permission, commit each coherent substantive memory update, including its index pointer, before responding. Group related edits; do not wait for session end or commit every individual file operation.
+- Include only attributable memory changes. Leave paths staged at entry untouched. For pre-existing unstaged or untracked changes, recover an attributable checkpoint separately; if attribution is missing or edits are mixed, preserve the file and report the pending checkpoint without requesting routine diff review.
+- Re-read the intended files and inspect their diff before committing. If another writer changed them since inspection, re-evaluate the scope; never reset, stash, or overwrite another writer's work to finish a checkpoint.
+- For paths clean at entry, use `git -C <memory-repo> add -- <explicit-memory-paths>` when new files need tracking, then `git -C <memory-repo> commit --only --file <message-file> -- <explicit-memory-paths>`. Inspect new-file contents too. Never use broad staging or `git commit -a`.
+- Write the exact message to a temporary file through a visible direct editing tool. Use `memory: <finding, correction, decision, or outcome>` as the subject; describe the consequential change in the body and add one `Agent-Authored-By: <agent name>; session=<actual harness-qualified session key>` trailer. Describe recorded evidence; do not turn proposals or agent success claims into verified outcomes.
+- Skip empty checkpoints. Keep normal signing and Git hooks enabled. Do not push, amend, squash, tag, or rewrite history under checkpoint permission.
+- After committing, run `git -C <memory-repo> show --stat --oneline HEAD` and `git -C <memory-repo> status --short`; confirm the expected memory paths were committed and unrelated changes remain. On failure, preserve the update, report the error, and leave the checkpoint pending.
+- On re-entry, inspect pending changes in relevant memory paths. Recover interrupted checkpoints only when their complete diff and originating sessions are supported by the files or session evidence; never sweep the bank's backlog into a current-turn commit.
+
+### History-aware retrieval
+
+- Read the current memory first. For questions about chronology, changed decisions, corrections, or work since an earlier session, use `git -C <memory-repo> log --format=fuller -- <relevant-memory-paths>` and inspect selected patches with `git -C <memory-repo> show <commit> -- <relevant-memory-paths>`.
+- Use commit messages to locate evidence, then verify against the patch and available source/session references. A checkpoint records capture time, not necessarily event time, completion, or factual verification.
 
 ### Handling Upstream Renames
 

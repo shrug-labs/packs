@@ -3,7 +3,7 @@ name: remember
 description: Capture knowledge into persistent memory — for strategic context, decisions, known issues, and observations not yet ready for pack content
 metadata:
   owner: shrug-labs
-  last_updated: 2026-04-01
+  last_updated: 2026-10-01
 ---
 
 # Remember
@@ -75,13 +75,17 @@ Why: Pack content requires deliberate craft — format constraints, validation, 
 
 4. **Write**
 
-   MUTATION: Writing to memory-bank. Show the full content. Wait for approval.
+   MUTATION: Writing to memory-bank. If active instructions grant standing permission for this capture, proceed without a review request; otherwise show the full content and wait for approval.
 
    Write the content to the destination.
 
 5. **Verify**
 
    Read back the destination file. Confirm: content is present, no duplicates, frontmatter is valid.
+
+6. **Checkpoint**
+
+   MUTATION: Apply the memory-bank skill's Local checkpoints guidance. With standing commit permission, create and verify the local checkpoint before responding; otherwise follow the active commit-approval rule.
 
 ## Notes
 

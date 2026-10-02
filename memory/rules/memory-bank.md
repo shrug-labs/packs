@@ -3,7 +3,7 @@ name: memory-bank
 description: Persistent memory routing — what knowledge goes where, when to retrieve it
 metadata:
   owner: shrug-labs
-  last_updated: 2026-03-23
+  last_updated: 2026-10-01
 ---
 
 # Memory Bank
@@ -46,8 +46,8 @@ Harness auto-captures land in `~/.config/aipack/memory-bank/inbox/`. During know
 ## Session Protocol
 
 - All files require YAML frontmatter (see memory-bank skill for schema).
-- Read existing memory-bank files before creating new ones.
-- Update on significant learning — do not wait for session end.
+- Load the memory-bank skill before writes or pending-checkpoint recovery; read existing files before creating new ones.
+- Update on significant learning; when standing permission authorizes local memory commits, checkpoint each coherent update before responding. Follow the memory-bank skill.
 - Every write records the real current session key in metadata; never invent date-based or `unknown` IDs. If no real key is available, stop before writing and ask. See memory-bank skill.
 - One SSOT per piece of knowledge. If it exists in a pack, do not duplicate in memory-bank.
 - Deleting memory-bank files requires user confirmation.
