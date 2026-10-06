@@ -3,7 +3,7 @@ name: aipack-system
 description: Use when syncing, configuring, troubleshooting, or managing aipack packs — including sync-config, profiles, harness behaviors, and the delivery pipeline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-09-15
+  last_updated: 2026-10-06
 ---
 
 # aipack System Reference
@@ -18,6 +18,8 @@ Pack source (SSOT) → aipack sync → Harness locations (managed output)
 
 **NEVER manually create, edit, or delete files in harness locations.**
 Harness locations (`~/.claude/rules/`, `~/.claude/skills/`, `~/.claude/commands/`, `.mcp.json`, etc.) are managed output. The SSOT is the pack source at `~/.config/aipack/packs/<pack>/`.
+
+For imported marketplace plugins, customize the profile and update the canonical upstream source; do not edit the acquired plugin files. Updates and replacement installs protect local edits rather than silently replacing them.
 
 This is a specific case of the generated-vs-authored principle: edit the input, not the output.
 
@@ -41,7 +43,7 @@ Every time you modify pack content:
    - **MUTATION:** a real sync writes managed harness files outside the conversation. Get explicit `yes` before the non-dry-run command.
 6. **Restart** harness client if needed (see below)
 
-Content vectors (rules, skills, workflows, agents, prompts, plugins, profiles, registries) are auto-discovered from their standard directories. You don't need to register new files in `pack.json` unless you want to filter which IDs are included. An explicit non-empty array in the manifest acts as a filter — only listed IDs sync.
+Content vectors (rules, skills, workflows, agents, prompts, profiles, registries) are auto-discovered from their standard directories. You don't need to register new files in `pack.json` unless you want to filter which IDs are included. An explicit non-empty array in the manifest acts as a filter — only listed IDs sync.
 
 ## Restart Requirements
 
@@ -56,6 +58,8 @@ After syncing, the harness client may need a restart for changes to take effect.
 ## Profile Mechanics
 
 Profiles are agent profiles — curated compositions of packs that define what the agent knows and can do. They control what content from which packs gets synced.
+
+Apply one selection per profile to every sync target. Use separate profiles for different selections. `profile include`, `profile exclude`, and `profile show` have no `--harness` selection flag; target delivery with `sync --harness`.
 
 ### Enabling/disabling packs
 
@@ -86,9 +90,6 @@ packs:
     agents:
       include: null
       exclude: null
-    plugins:
-      include: null
-      exclude: null
 ```
 
 ### Profile simplification
@@ -105,7 +106,7 @@ When a pack entry should include all content, omit the vector sections entirely:
 
 - Omitting `rules:`, `skills:`, etc. means "include everything" for normal packs, "include nothing" for quiet packs.
 - `include: []` (empty list) is treated as "include all" for backward compatibility — it does NOT mean "include nothing." This is a common misunderstanding.
-- Quiet packs (`quiet: true` on the pack entry) flip the default across every delivery mechanism — content vectors, plugin references, MCP servers, and harness settings. Omitted or empty selectors resolve to nothing; an explicit opt-in is required to activate anything (non-empty `include` list for content, an explicit `mcp:` entry per server, `settings.enabled: true` for configs). Before v0.24.0 quiet applied only to content vectors — quiet packs still contributed every manifest-declared MCP server and their `configs/` settings.
+- Quiet packs (`quiet: true` on the pack entry) flip the default across every delivery mechanism — content vectors, MCP servers, and harness settings. Omitted or empty selectors resolve to nothing; an explicit opt-in is required to activate anything (non-empty `include` list for content, an explicit `mcp:` entry per server, `settings.enabled: true` for configs). Before v0.24.0 quiet applied only to content vectors — quiet packs still contributed every manifest-declared MCP server and their `configs/` settings.
 - Only add `include:`/`exclude:` sections when you need to filter specific items.
 
 ### Settings
@@ -120,7 +121,8 @@ Harness settings files are composed from three sources during sync:
 
 If a template redeclares a managed key, the managed value silently overwrites it during sync — the user's preference is dropped with no warning.
 
-Drop-in plugin files (`configs.harness_plugins`) are pure copies. Same-filename drop-ins from different packs produce an error. First-class plugin references live under `plugins/<id>.json`, are selectable through profile `plugins:` include/exclude, and sync additively to harness plugin enablement files. Removing a plugin reference from a profile stops aipack from re-asserting it but does not uninstall or disable it in the harness.
+- Declare pure-copy drop-in files under `configs.harness_plugins`; same-filename drop-ins from different packs produce an error.
+- Import marketplace plugins through the pack lifecycle. Select their supported components in the profile, reconcile changes through sync, and remove attributed delivery with `pack delete`; retained runtime data is not deleted.
 
 ### Toggling after sync
 
@@ -234,7 +236,7 @@ Each harness writes content to different locations:
 | Hooks | `settings.local.json` | `plugins/aipack-hooks.js` | `.codex/hooks.json` | `.clinerules/hooks/` |
 | MCP | `.mcp.json` | `opencode.json` | `config.toml` | Global VS Code storage |
 | Settings | `settings.local.json` | `opencode.json` | `config.toml` | N/A |
-| Plugins | `.claude/settings.json`, `~/.claude/plugins/known_marketplaces.json` | N/A | `config.toml` | N/A |
+| Imported plugins | Native installer or supported components | Supported components | Native installer | Supported components |
 
 Global scope prefixes with `~/` (e.g., `~/.claude/rules/`). Project scope writes to the project directory.
 
@@ -255,7 +257,6 @@ Content vectors are auto-discovered from standard directories. Explicit arrays a
 {
   "rules": ["rule-one", "rule-two"],
   "skills": ["deploy"],
-  "plugins": ["linear"],
   "profiles": ["dev", "lean"],
   "registries": ["team-tools"],
   "extras": ["scripts/run-server.sh", "data"],
@@ -264,7 +265,7 @@ Content vectors are auto-discovered from standard directories. Explicit arrays a
 }
 ```
 
-All content fields use bare IDs (e.g., `"profiles": ["dev"]` corresponds to `profiles/dev.yaml`; `"plugins": ["linear"]` corresponds to `plugins/linear.json`). Extras are the exception — they use relative paths because they can reference files outside standard directories.
+All content fields use bare IDs (e.g., `"profiles": ["dev"]` corresponds to `profiles/dev.yaml`). Extras are the exception — they use relative paths because they can reference files outside standard directories.
 
 Tool permissions are entirely a profile concern — `pack.json` lists server IDs only. Profiles own `allowed_tools` / `always_allowed_tools` / `disabled_tools` per server. A silent profile (no allow-list entries) emits no allow list, so the harness's native default applies. Packs that want opinionated defaults ship them through a named bundled profile such as `profiles/team.yaml`, not the manifest. Do not use `profiles/default.yaml`; `default` is reserved for the user's local default profile and is rejected by `pack validate`. Pre-v0.23 packs use `schema_version: 1` with a nested `mcp: { servers: { ... }, default_allowed_tools: [...] }` object; they still load in v0.23+ under the dedicated v1 parser, but v1's pack-level tool policy is read and discarded — use `schema_version: 2` with a bundled profile to express tool policy.
 
@@ -308,6 +309,24 @@ Pack state lives in `aipack.lock`, not `sync-config.yaml`. To answer *which pack
 | `aipack pack delete <name> --keep-rendered` | Remove tracking but leave rendered files unmanaged |
 | `aipack pack add <name>` | Add an installed pack to the active profile |
 | `aipack pack remove <name>` | Remove a pack from the active profile |
+
+### Imported marketplace plugins
+
+- Verify the running CLI exposes `registry fetch --format` before using this path; if unavailable, report the installed version and request an update.
+- Inspect the owner source, catalog path, plugin prerequisites, and existing native installation before proposing acquisition.
+- Fetch the catalog with `aipack registry fetch <repo-url> --path <catalog-path> --format codex-legacy --name <source-name>` after approval. Formats are `claude`, `codex-legacy`, and `agent-plugins`.
+- Resolve the plugin name with `aipack registry list`; run `aipack pack inspect <plugin-name> --json` after approval to review inventory and target compatibility.
+- Install with `aipack pack install <plugin-name> --add --quiet` after approval; obtain component IDs from `aipack pack show <plugin-name>`.
+- Select with `aipack profile include <id> --kind skill --pack <plugin-name>`; use `hook` or `mcp` only after checking the target's support. Preview with `aipack sync --harness <target> --dry-run` before an approved sync.
+- Use native Claude delivery for Claude imports. Codex legacy imports support native Codex plus supported skills, stdio MCP servers, and command hooks on Claude Code, OpenCode, and Cline. Agent Plugins v1 foreign delivery supports skills and stdio MCP; do not promise other vectors without the [current support reference](https://github.com/shrug-labs/aipack/blob/main/docs/aipack.md#imported-plugin-support).
+- Treat credentials, hook approvals, runtime dependencies, and client reload as separate readiness checks. `doctor` validates configuration; it does not certify a working plugin workflow.
+- Authenticate protected services and connect apps through the target host after syncing; AIPack sync does not initiate login or query account connections.
+- When unmanaged native state conflicts, use the host's removal flow after approval; preview AIPack sync again before applying it.
+- Update with `aipack pack update <pack> --dry-run`, then an approved update and sync. Remove with `aipack pack delete <pack> --dry-run`, then approved deletion. Do not use `rm` or patch native caches.
+- Native plugin installation and foreign stdio MCP delivery are unsupported on Windows. Imported OpenCode/Cline command hooks retain their shell/runtime prerequisites; Windows-host execution remains unverified.
+- For imported MCP startup deadlines, omitted or `host` delegates to the target budget, `strict` refuses foreign deadline mapping, and `unified` applies only to OpenCode/Cline's combined budget. Put the policy under the pack's `mcp.<server>.startup_timeout`, not a target-specific profile block.
+
+Detailed command examples: [Installing marketplace plugins](https://github.com/shrug-labs/aipack/blob/main/docs/installing-packs.md#installing-marketplace-plugins).
 
 ### Version pinning
 

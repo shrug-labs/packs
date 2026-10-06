@@ -27,6 +27,12 @@ All three variants (CLI, Desktop App, IDE extension) share `~/.codex/config.toml
 - Progressive disclosure: only name + description loaded at startup, full SKILL.md on demand
 - Implicit invocation — model auto-selects based on description match
 
+## Marketplace plugin delivery through AIPack
+
+- For a Claude/Codex marketplace source, invoke `aipack-system` before choosing acquisition, profile selection, sync, or authentication commands.
+- Keep native credentials, hook trust, and source-admission restrictions with Codex. Importing a plugin as a pack does not bypass them.
+- Use the pack lifecycle for imported plugins and check [ownership and scopes](https://github.com/shrug-labs/aipack/blob/main/docs/aipack.md#ownership-and-scopes) before handling an existing native installation.
+
 ## MCP servers
 
 Configured in `config.toml` under `[mcp_servers.<name>]` tables:

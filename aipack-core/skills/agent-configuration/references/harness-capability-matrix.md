@@ -15,6 +15,13 @@ Reference for how each harness supports pack capability vectors. Consult before 
 | Hooks | `settings.json` hooks (25+ events, command/http/prompt/agent) | Generated `plugins/aipack-hooks.js` server plugin | `hooks.json` (experimental, 5 events, command) | `.clinerules/hooks/` (8 events, script) |
 | Plugins | `.mcp.json` (always generated) | `oh-my-opencode.json` (pure copy) | MCP-only via MergeMode | `cline_mcp_settings.json` (always generated) |
 
+## Imported marketplace components
+
+- Invoke `aipack-system` for plugin-as-pack acquisition and lifecycle decisions.
+- Distinguish native package loading from portable skill/MCP/hook delivery; use the [imported-plugin support matrix](https://github.com/shrug-labs/aipack/blob/main/docs/aipack.md#imported-plugin-support) for supported source/target combinations.
+- Apply the same profile selection to every target; choose separate profiles when selections differ.
+- Verify destination credentials, hook trust, and runtime prerequisites separately from configuration delivery.
+
 ## Agent Frontmatter Transformation
 
 Pack agent files use a harness-neutral markdown schema. Each harness transforms during sync:
