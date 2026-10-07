@@ -3,7 +3,7 @@ name: aipack-system
 description: Use when syncing, configuring, troubleshooting, or managing aipack packs — including sync-config, profiles, harness behaviors, and the delivery pipeline
 metadata:
   owner: shrug-labs
-  last_updated: 2026-10-06
+  last_updated: 2026-10-07
 ---
 
 # aipack System Reference
@@ -312,17 +312,14 @@ Pack state lives in `aipack.lock`, not `sync-config.yaml`. To answer *which pack
 
 ### Imported marketplace plugins
 
-- Verify the running CLI exposes `registry fetch --format` before using this path; if unavailable, report the installed version and request an update.
-- Inspect the owner source, catalog path, plugin prerequisites, and existing native installation before proposing acquisition.
-- Fetch the catalog with `aipack registry fetch <repo-url> --path <catalog-path> --format codex-legacy --name <source-name>` after approval. Formats are `claude`, `codex-legacy`, and `agent-plugins`.
-- Resolve the plugin name with `aipack registry list`; run `aipack pack inspect <plugin-name> --json` after approval to review inventory and target compatibility.
-- Install with `aipack pack install <plugin-name> --add --quiet` after approval; obtain component IDs from `aipack pack show <plugin-name>`.
-- Select with `aipack profile include <id> --kind skill --pack <plugin-name>`; use `hook` or `mcp` only after checking the target's support. Preview with `aipack sync --harness <target> --dry-run` before an approved sync.
+- Marketplace imports are available in AIPack 0.35.0 and later.
+- For a requested plugin installation, use `aipack registry fetch <repo-url>`, `aipack pack install <plugin-name> --add`, then `aipack sync --harness <target>`. Catalog path, cache name and format are discovered automatically.
+- For individual components, install with `--add --quiet`, obtain IDs from `aipack pack show <plugin-name>`, then select with `aipack profile include <id> --kind skill --pack <plugin-name>` before syncing. Apply the same selection to every target; use separate profiles for different selections.
+- When moving an existing native installation to AIPack, remove its plugins and marketplace through that host first. Name the affected plugins and marketplace; retain unrelated installations.
 - Use native Claude delivery for Claude imports. Codex legacy imports support native Codex plus supported skills, stdio MCP servers, and command hooks on Claude Code, OpenCode, and Cline. Agent Plugins v1 foreign delivery supports skills and stdio MCP; do not promise other vectors without the [current support reference](https://github.com/shrug-labs/aipack/blob/main/docs/aipack.md#imported-plugin-support).
 - Treat credentials, hook approvals, runtime dependencies, and client reload as separate readiness checks. `doctor` validates configuration; it does not certify a working plugin workflow.
 - Authenticate protected services and connect apps through the target host after syncing; AIPack sync does not initiate login or query account connections.
-- When unmanaged native state conflicts, use the host's removal flow after approval; preview AIPack sync again before applying it.
-- Update with `aipack pack update <pack> --dry-run`, then an approved update and sync. Remove with `aipack pack delete <pack> --dry-run`, then approved deletion. Do not use `rm` or patch native caches.
+- Update with `aipack pack update <pack>` and sync. Remove with `aipack pack delete <pack>`; do not use `rm` or patch native caches.
 - Native plugin installation and foreign stdio MCP delivery are unsupported on Windows. Imported OpenCode/Cline command hooks retain their shell/runtime prerequisites; Windows-host execution remains unverified.
 - For imported MCP startup deadlines, omitted or `host` delegates to the target budget, `strict` refuses foreign deadline mapping, and `unified` applies only to OpenCode/Cline's combined budget. Put the policy under the pack's `mcp.<server>.startup_timeout`, not a target-specific profile block.
 

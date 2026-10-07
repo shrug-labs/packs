@@ -13,7 +13,6 @@ Reference for how each harness supports pack capability vectors. Consult before 
 | MCP | `.mcp.json` (project), `~/.claude.json` (global) | `opencode.json` (JSON) | `config.toml` (`[mcp_servers]` TOML table) | `cline_mcp_settings.json` (**global only**) |
 | Settings | `settings.local.json` (template + merge) | `opencode.json` (template + merge) | `config.toml` (template + merge) | **Not supported** |
 | Hooks | `settings.json` hooks (25+ events, command/http/prompt/agent) | Generated `plugins/aipack-hooks.js` server plugin | `hooks.json` (experimental, 5 events, command) | `.clinerules/hooks/` (8 events, script) |
-| Plugins | `.mcp.json` (always generated) | `oh-my-opencode.json` (pure copy) | MCP-only via MergeMode | `cline_mcp_settings.json` (always generated) |
 
 ## Imported marketplace components
 
@@ -68,7 +67,7 @@ Pack agent files use a harness-neutral markdown schema. Each harness transforms 
 4. **Codex: rules flatten to AGENTS.override.md** — no individual rule files
 5. **Codex: agents are TOML** — aipack converts markdown agents to `.toml` at sync
 6. **Codex: hooks are experimental** — behind `[features] codex_hooks = true`
-7. **Plugins bypass `--skip-settings`** — always synced when present
+7. **Selected MCP servers and imported plugin components bypass `--skip-settings`** — profile selection still controls delivery
 8. **OpenCode: `tools` != `permission`** — `tools` (boolean map) = MCP; `permission` (strings) = native harness tools
 9. **Claude Code: MCP config != tool permissions** — `.mcp.json` defines servers; `settings.json` controls access via `permissions.allow`/`permissions.deny`
 10. **Claude Code: deny > allow** — deny always wins regardless of specificity; wildcard deny blocks per-tool allow

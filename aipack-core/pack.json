@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "name": "aipack-core",
-  "version": "2026.10.06",
+  "version": "2026.10.07",
   "root": ".",
   "rules": [
     "aipack-guardrails",
