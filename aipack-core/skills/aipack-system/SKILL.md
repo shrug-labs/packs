@@ -314,6 +314,7 @@ Pack state lives in `aipack.lock`, not `sync-config.yaml`. To answer *which pack
 
 - Marketplace imports are available in AIPack 0.35.0 and later.
 - For a requested plugin installation, use `aipack registry fetch <repo-url>`, `aipack pack install <plugin-name> --add`, then `aipack sync --harness <target>`. Catalog path, cache name and format are discovered automatically.
+- To install one plugin without registering its marketplace, use `aipack pack install <repo-url> --path <plugin-subdirectory> --add`, then sync. The colocated catalog supplies its native identity and policy; updates retain the source.
 - For individual components, install with `--add --quiet`, obtain IDs from `aipack pack show <plugin-name>`, then select with `aipack profile include <id> --kind skill --pack <plugin-name>` before syncing. Apply the same selection to every target; use separate profiles for different selections.
 - When moving an existing native installation to AIPack, remove its plugins and marketplace through that host first. Name the affected plugins and marketplace; retain unrelated installations.
 - Use native Claude delivery for Claude imports. Codex legacy imports support native Codex plus supported skills, stdio MCP servers, and command hooks on Claude Code, OpenCode, and Cline. Agent Plugins v1 foreign delivery supports skills and stdio MCP; do not promise other vectors without the [current support reference](https://github.com/shrug-labs/aipack/blob/main/docs/aipack.md#imported-plugin-support).
@@ -332,8 +333,8 @@ Packs can be pinned to an exact semver tag, a partial semver, a namespaced tag (
 | Form | Resolves to | When |
 |------|-------------|------|
 | `pack install foo@1.2.3` | Exact tag `v1.2.3`, pinned | Reproducible install |
-| `pack install foo@v1` | Highest stable tag matching `v1.x.x`, pinned to that exact tag | Track a major line |
-| `pack install foo --ref v1.2` | Highest stable `v1.2.x`, pinned | Track a minor line |
+| `pack install foo@v1` | Highest stable tag matching `v1.x.x`, pinned to that exact tag | Choose a version within a major line |
+| `pack install foo --ref v1.2` | Highest stable `v1.2.x`, pinned to that exact tag | Choose a version within a minor line |
 | `pack install foo` | Default branch HEAD, no pin | Always latest |
 | `pack install foo --ref <commit-hash>` | Exact commit, pinned | Bisect or reproduce |
 | `pack install foo --ref latest` | Default branch HEAD, clears any existing pin | Unpin |
@@ -344,7 +345,7 @@ Packs can be pinned to an exact semver tag, a partial semver, a namespaced tag (
 
 For multi-pack monorepos: once a pack is installed at a namespaced tag (`my-pack/v0.3.0`), subsequent `pack update my-pack --ref 0.3.1` auto-inherits the `my-pack/` prefix from the lockfile — users can pass bare semver on updates without retyping the prefix. `pack versions my-pack` similarly scopes its tag listing to the installed prefix.
 
-`pack update <name>` against a pinned pack re-resolves the pin's matcher (e.g. `v1` finds the new highest matching tag) but preserves the pin shape. `pack update` against an unpinned pack always moves to the latest default-branch commit. `aipack doctor` reports drift between an installed pack's recorded ref and its remote head.
+Git partial refs resolve to one exact tag stored in the lockfile. `pack update <name>` leaves that pin in place; pass `--ref v1` to resolve the major line again. Unpinned Git packs follow their recorded branch, or the default branch when no ref is set. `aipack doctor` reports installed-source drift.
 
 ### Profile params after install
 
